@@ -1,94 +1,136 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Iniciar Sesión</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .login-box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      width: 300px;
-      text-align: center;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: black;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    #msg {
-      color: red;
-      margin-top: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Login 3R Ingeniería</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .login-box {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  .logo {
+    width: 130px;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    color: #0f172a;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 5px rgba(37,99,235,0.3);
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #1d4ed8;
+  }
+
+  #msg {
+    margin-top: 15px;
+    font-size: 13px;
+    color: red;
+  }
+</style>
 </head>
+
 <body>
+
 <div class="login-box">
+
+  <!-- LOGO -->
+  <img src="https://drive.google.com/uc?export=view&id=1Gwai3CTBb3VkHtJdY9DsXwekh74BjgbR" class="logo">
+
   <h2>Acceso</h2>
-  <input id="user" type="text" placeholder="Usuario">
+
+  <input id="user" type="text" placeholder="Correo">
   <input id="pass" type="password" placeholder="Contraseña">
-  <button onclick="login()">Entrar</button>
+
+  <button onclick="login()">Ingresar</button>
+
   <p id="msg"></p>
+
 </div>
 
-<!-- Supabase versión específica -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-  const supabaseUrl = "https://pkkblvultuuzgnuxxajs.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBra2JsdnVsdHV1emdudXh4YWpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNTMxOTYsImV4cCI6MjA5MjYyOTE5Nn0.WpWrcMfAOKmf_nRCgU3wjVxjseC7J4G1mbXJRNmjAWo";
-  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = "https://pkkblvultuuzgnuxxajs.supabase.co";
+const supabaseKey = "TU_API_KEY_AQUI"; // 🔴 pega aquí tu anon public key
 
-  async function login() {
-    const correo = document.getElementById("user").value.trim();
-    const pass = document.getElementById("pass").value.trim();
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    if (!correo || !pass) {
-      document.getElementById("msg").innerText = "Completa todos los campos";
-      return;
-    }
+async function login() {
+  const correo = document.getElementById("user").value.trim();
+  const pass = document.getElementById("pass").value.trim();
 
-    const { data, error } = await supabaseClient
-      .from("Usuarios3R")
-      .select("Nombre")
-      .eq("Correo", correo)
-      .eq("Contraseña", pass)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Supabase error:", error);
-      document.getElementById("msg").innerText = "Error: " + error.message;
-      return;
-    }
-
-    if (!data) {
-      document.getElementById("msg").innerText = "Usuario o contraseña incorrectos";
-      return;
-    }
-
-    alert("Bienvenido " + data.Nombre);
-    window.location.href = "app.html";
+  if (!correo || !pass) {
+    document.getElementById("msg").innerText = "Completa todos los campos";
+    return;
   }
+
+  const { data, error } = await supabaseClient
+    .from("Usuarios3R")
+    .select("Nombre")
+    .eq("Correo", correo)
+    .eq("Contraseña", pass)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    document.getElementById("msg").innerText = "Error: " + error.message;
+    return;
+  }
+
+  if (!data) {
+    document.getElementById("msg").innerText = "Usuario o contraseña incorrectos";
+    return;
+  }
+
+  alert("Bienvenido " + data.Nombre);
+  window.location.href = "app.html";
+}
 </script>
+
 </body>
 </html>
