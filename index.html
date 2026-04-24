@@ -127,8 +127,8 @@ async function login() {
     return;
   }
 
-  alert("Bienvenido " + data.Nombre);
-  window.location.href = "app.html";
+  localStorage.setItem("usuario", data.Nombre);
+window.location.href = "app.html";
 }
 </script>
 
