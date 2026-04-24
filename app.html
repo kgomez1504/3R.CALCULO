@@ -10,6 +10,7 @@
       max-width: 400px;
       margin: auto;
       padding: 20px;
+      background: #fafafa;
     }
 
     input, button {
@@ -20,6 +21,14 @@
 
     button {
       cursor: pointer;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    h2 {
+      text-align: center;
     }
   </style>
 </head>
@@ -42,8 +51,8 @@
 
 <script>
   // 🔴 PEGA AQUÍ TUS DATOS DE SUPABASE
-  const supabaseUrl = "https://pkkblvultuuzgnuxxajs.supabase.co";
-const supabaseKey = "sb_publishable_kwU5idsCkhnhGYzmgE2B7Q_dvRxU1gU";
+  const supabaseUrl = "https://pkkblvultuuzgnuxxajs.supabase.co/rest/v1/";
+  const supabaseKey = "sb_publishable_kwU5idsCkhnhGYzmgE2B7Q_dvRxU1gU";
 
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
