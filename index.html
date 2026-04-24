@@ -7,148 +7,127 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+      background: #d1d5db;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
     }
-    .wrapper {
-      width: 380px;
-      padding: 20px;
-    }
     .card {
       background: #ffffff;
       border-radius: 20px;
-      padding: 40px 36px 36px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      padding: 36px 32px 28px;
+      width: 340px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
     }
     .logo-area {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .logo-area img {
-      width: 120px;
+      width: 130px;
       height: auto;
-      margin-bottom: 12px;
-    }
-    .logo-area h1 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #0f172a;
-      letter-spacing: -0.3px;
+      display: block;
+      margin: 0 auto 10px;
     }
     .logo-area p {
-      font-size: 12px;
-      color: #94a3b8;
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 1px;
+      text-transform: uppercase;
       margin-top: 4px;
     }
     .divider {
       height: 1px;
-      background: #e2e8f0;
-      margin-bottom: 28px;
+      background: #f0f0f0;
+      margin-bottom: 22px;
     }
     .field {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .field label {
       display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #475569;
-      margin-bottom: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #555;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin-bottom: 6px;
     }
     .field input {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 12px;
       border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
+      border-radius: 8px;
       font-size: 14px;
-      color: #0f172a;
-      background: #f8fafc;
-      transition: all 0.2s;
+      color: #111;
+      background: #f9f9f9;
       outline: none;
+      transition: all 0.2s;
     }
     .field input:focus {
-      border-color: #2563eb;
+      border-color: #e02020;
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      box-shadow: 0 0 0 3px rgba(224,32,32,0.1);
     }
     .btn {
       width: 100%;
-      padding: 13px;
-      margin-top: 8px;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      padding: 12px;
+      margin-top: 6px;
+      background: #e02020;
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
       cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.3px;
+      transition: background 0.2s;
     }
-    .btn:hover {
-      background: linear-gradient(135deg, #1d4ed8, #1e40af);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(37,99,235,0.35);
-    }
-    .btn:active {
-      transform: translateY(0);
-    }
+    .btn:hover { background: #c01a1a; }
     #msg {
-      margin-top: 14px;
-      font-size: 13px;
-      color: #dc2626;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #e02020;
       text-align: center;
-      min-height: 18px;
+      min-height: 16px;
     }
     .footer {
       text-align: center;
-      margin-top: 24px;
-      font-size: 11px;
-      color: #94a3b8;
+      margin-top: 20px;
     }
-    .version-badge {
+    .version {
       display: inline-block;
-      background: #f1f5f9;
-      color: #64748b;
-      font-size: 10px;
-      font-weight: 600;
-      padding: 3px 10px;
+      background: #f4f4f4;
+      border: 1px solid #e5e5e5;
       border-radius: 20px;
-      margin-top: 6px;
-      border: 1px solid #e2e8f0;
+      padding: 3px 12px;
+      font-size: 10px;
+      color: #999;
+      font-weight: 600;
       letter-spacing: 0.5px;
     }
   </style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="card">
-    <div class="logo-area">
-      <img src="logo.png" alt="3R Ingeniería">
-      <h1>Bienvenido</h1>
-      <p>Ingresa tus credenciales para continuar</p>
-    </div>
-    <div class="divider"></div>
-    <div class="field">
-      <label>Usuario</label>
-      <input id="user" type="text" placeholder="Ingresa tu usuario">
-    </div>
-    <div class="field">
-      <label>Contraseña</label>
-      <input id="pass" type="password" placeholder="••••••••">
-    </div>
-    <button class="btn" onclick="login()">Ingresar al sistema</button>
-    <p id="msg"></p>
-    <div class="footer">
-      3R Ingeniería — Sistema de Gestión
-      <br>
-      <span class="version-badge">V 1.0</span>
-    </div>
+<div class="card">
+  <div class="logo-area">
+    <img src="logo.png" alt="3R Ingeniería">
+    <p>Sistema de Gestión</p>
+  </div>
+  <div class="divider"></div>
+  <div class="field">
+    <label>Usuario</label>
+    <input id="user" type="text" placeholder="Ingresa tu usuario">
+  </div>
+  <div class="field">
+    <label>Contraseña</label>
+    <input id="pass" type="password" placeholder="••••••••">
+  </div>
+  <button class="btn" onclick="login()">Ingresar al sistema</button>
+  <p id="msg"></p>
+  <div class="footer">
+    <span class="version">V 1.0</span>
   </div>
 </div>
 
