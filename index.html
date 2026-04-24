@@ -1,136 +1,189 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Login 3R Ingeniería</title>
-
-<style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  .login-box {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 16px;
-    width: 340px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  }
-
-  .logo {
-    width: 140px;
-    margin-bottom: 20px;
-  }
-
-  h2 {
-    margin-bottom: 20px;
-    color: #0f172a;
-  }
-
-  input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 5px rgba(37,99,235,0.3);
-  }
-
-  button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-
-  button:hover {
-    background: #1d4ed8;
-  }
-
-  #msg {
-    margin-top: 15px;
-    font-size: 13px;
-    color: red;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Login 3R Ingeniería</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .wrapper {
+      width: 380px;
+      padding: 20px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 40px 36px 36px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .logo-area {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .logo-area img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 12px;
+    }
+    .logo-area h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+    }
+    .logo-area p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .divider {
+      height: 1px;
+      background: #e2e8f0;
+      margin-bottom: 28px;
+    }
+    .field {
+      margin-bottom: 16px;
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #0f172a;
+      background: #f8fafc;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .field input:focus {
+      border-color: #2563eb;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+    .btn {
+      width: 100%;
+      padding: 13px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(37,99,235,0.35);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+    #msg {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #dc2626;
+      text-align: center;
+      min-height: 18px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .version-badge {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 6px;
+      border: 1px solid #e2e8f0;
+      letter-spacing: 0.5px;
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="login-box">
-
-  <!-- LOGO LOCAL -->
-  <img src="logo.png" class="logo">
-
-  <h2>Acceso</h2>
-
-  <input id="user" type="text" placeholder="Correo">
-  <input id="pass" type="password" placeholder="Contraseña">
-
-  <button onclick="login()">Ingresar</button>
-
-  <p id="msg"></p>
-
+<div class="wrapper">
+  <div class="card">
+    <div class="logo-area">
+      <img src="logo.png" alt="3R Ingeniería">
+      <h1>Bienvenido</h1>
+      <p>Ingresa tus credenciales para continuar</p>
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <label>Usuario</label>
+      <input id="user" type="text" placeholder="Ingresa tu usuario">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input id="pass" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn" onclick="login()">Ingresar al sistema</button>
+    <p id="msg"></p>
+    <div class="footer">
+      3R Ingeniería — Sistema de Gestión
+      <br>
+      <span class="version-badge">V 1.0</span>
+    </div>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 <script>
 const supabaseUrl = "https://pkkblvultuuzgnuxxajs.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBra2JsdnVsdHV1emdudXh4YWpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNTMxOTYsImV4cCI6MjA5MjYyOTE5Nn0.WpWrcMfAOKmf_nRCgU3wjVxjseC7J4G1mbXJRNmjAWo"; // 👈 pega tu anon public key
-
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBra2JsdnVsdHV1emdudXh4YWpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNTMxOTYsImV4cCI6MjA5MjYyOTE5Nn0.WpWrcMfAOKmf_nRCgU3wjVxjseC7J4G1mbXJRNmjAWo";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 async function login() {
   const correo = document.getElementById("user").value.trim();
   const pass = document.getElementById("pass").value.trim();
-
   if (!correo || !pass) {
     document.getElementById("msg").innerText = "Completa todos los campos";
     return;
   }
-
+  document.getElementById("msg").innerText = "";
   const { data, error } = await supabaseClient
     .from("Usuarios3R")
     .select("Nombre")
     .eq("Correo", correo)
     .eq("Contraseña", pass)
     .maybeSingle();
-
   if (error) {
     console.error(error);
     document.getElementById("msg").innerText = "Error: " + error.message;
     return;
   }
-
   if (!data) {
     document.getElementById("msg").innerText = "Usuario o contraseña incorrectos";
     return;
   }
-
   localStorage.setItem("usuario", data.Nombre);
-window.location.href = "app.html";
+  window.location.href = "app.html";
 }
 </script>
-
 </body>
 </html>
