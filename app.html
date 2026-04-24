@@ -52,7 +52,31 @@
   .card h2 {
     margin: 0;
   }
+
+  .logout-btn {
+    margin-top: 40px;
+    padding: 10px 20px;
+    border: none;
+    background: #ef4444;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .logout-btn:hover {
+    background: #dc2626;
+  }
 </style>
+
+<!-- 🔒 PROTECCIÓN (antes de cargar todo) -->
+<script>
+  const usuario = localStorage.getItem("usuario");
+
+  if (!usuario) {
+    window.location.href = "index.html";
+  }
+</script>
+
 </head>
 
 <body>
@@ -77,22 +101,31 @@
 
   </div>
 
+  <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+
 </div>
 
 <script>
-  // 🔹 Recuperar nombre del usuario
+  // 👤 Mostrar nombre del usuario
   const nombre = localStorage.getItem("usuario");
 
   if (nombre) {
     document.getElementById("bienvenida").innerText = "Bienvenido, " + nombre;
   }
 
+  // 📂 Navegación
   function irCRM() {
     alert("Módulo CRM en construcción");
   }
 
   function irCalculo() {
     window.location.href = "calculadora.html";
+  }
+
+  // 🔓 Cerrar sesión
+  function logout() {
+    localStorage.removeItem("usuario");
+    window.location.href = "index.html";
   }
 </script>
 
