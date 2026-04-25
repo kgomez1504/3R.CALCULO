@@ -2,35 +2,38 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel 3R Ingeniería</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #c8cdd6;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      align-items: flex-start;
     }
     .container {
       display: flex;
-      width: 900px;
-      min-height: 560px;
+      width: 100%;
+      max-width: 1400px;
+      min-height: 100vh;
       background: #fff;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.18);
+      box-shadow: 0 0 60px rgba(0,0,0,0.15);
     }
 
     /* SIDEBAR */
     .sidebar {
-      width: 220px;
+      width: 240px;
+      min-width: 240px;
       background: #1a1a1a;
       display: flex;
       flex-direction: column;
       padding: 32px 16px;
-      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
     }
     .sidebar-logo {
       text-align: center;
@@ -77,17 +80,11 @@
       margin-bottom: 2px;
       cursor: pointer;
       transition: background 0.15s;
-      text-decoration: none;
     }
     .nav-item:hover { background: #2a2a2a; }
     .nav-item.active { background: #e02020; }
-    .nav-item span {
-      font-size: 12px;
-      color: #888;
-      font-weight: 500;
-    }
+    .nav-item span { font-size: 12px; color: #888; font-weight: 500; }
     .nav-item.active span { color: #fff; font-weight: 700; }
-    .nav-item svg { flex-shrink: 0; }
     .sidebar-footer {
       margin-top: auto;
       border-top: 1px solid #2a2a2a;
@@ -101,6 +98,7 @@
       flex-direction: column;
       background: #f7f8fa;
       min-width: 0;
+      min-height: 100vh;
     }
     .topbar {
       background: #fff;
@@ -109,35 +107,15 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid #f0f0f0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
-    .topbar-left h2 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #111;
-    }
-    .topbar-left p {
-      font-size: 11px;
-      color: #999;
-      margin-top: 2px;
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .status-dot {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: #999;
-    }
-    .dot {
-      width: 6px;
-      height: 6px;
-      background: #22c55e;
-      border-radius: 50%;
-    }
+    .topbar-left h2 { font-size: 16px; font-weight: 700; color: #111; }
+    .topbar-left p { font-size: 11px; color: #999; margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .status-dot { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #999; }
+    .dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
     .version {
       background: #f5f5f5;
       border: 1px solid #eee;
@@ -148,11 +126,24 @@
       font-weight: 700;
       letter-spacing: 1px;
     }
-    .content {
-      flex: 1;
-      padding: 24px 28px;
-      overflow-y: auto;
+
+    /* HAMBURGER */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
     }
+    .hamburger span {
+      width: 22px;
+      height: 2px;
+      background: #111;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .content { flex: 1; padding: 28px; }
     .section-title {
       font-size: 11px;
       font-weight: 700;
@@ -162,10 +153,10 @@
       margin-bottom: 14px;
     }
 
-    /* CARDS MÓDULOS */
+    /* MODULES GRID */
     .modules-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 14px;
       margin-bottom: 28px;
     }
@@ -201,16 +192,8 @@
       justify-content: center;
       margin-bottom: 12px;
     }
-    .module-card h3 {
-      font-size: 13px;
-      font-weight: 700;
-      color: #111;
-      margin-bottom: 3px;
-    }
-    .module-card p {
-      font-size: 11px;
-      color: #999;
-    }
+    .module-card h3 { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .module-card p { font-size: 11px; color: #999; }
     .badge {
       display: inline-block;
       background: #f0f0f0;
@@ -223,15 +206,12 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .badge.active {
-      background: #fff0f0;
-      color: #e02020;
-    }
+    .badge.active { background: #fff0f0; color: #e02020; }
 
     /* STATS */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 12px;
     }
     .stat-card {
@@ -240,46 +220,45 @@
       border-radius: 12px;
       padding: 16px;
     }
-    .stat-card .label {
-      font-size: 10px;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-    .stat-card .value {
-      font-size: 22px;
-      font-weight: 700;
-      color: #111;
-    }
-    .stat-card .sub {
-      font-size: 10px;
-      color: #aaa;
-      margin-top: 2px;
-    }
+    .stat-card .label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .stat-card .value { font-size: 22px; font-weight: 700; color: #111; }
+    .stat-card .sub { font-size: 10px; color: #aaa; margin-top: 2px; }
     .stat-card .sub.green { color: #22c55e; }
 
-    /* TIMER BAR */
-    .timer-bar-wrap {
-      height: 3px;
-      background: #f0f0f0;
+    .timer-bar-wrap { height: 3px; background: #f0f0f0; }
+    .timer-bar { height: 3px; width: 100%; background: #e02020; transition: width 1s linear; }
+
+    /* OVERLAY MOBILE */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
     }
-    .timer-bar {
-      height: 3px;
-      width: 100%;
-      background: #e02020;
-      transition: width 1s linear;
+    .overlay.show { display: block; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed;
+        left: -240px;
+        top: 0;
+        height: 100vh;
+        z-index: 100;
+        transition: left 0.25s ease;
+      }
+      .sidebar.open { left: 0; }
+      .hamburger { display: flex; }
+      .topbar-right .status-dot { display: none; }
+      .content { padding: 20px 16px; }
     }
 
-    @media (max-width: 700px) {
-      .container { flex-direction: column; width: 100%; margin: 12px; border-radius: 16px; min-height: unset; }
-      .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; padding: 20px; gap: 8px; }
-      .sidebar-logo { margin-bottom: 0; display: flex; align-items: center; gap: 12px; }
-      .sidebar-logo .line, .sidebar-logo .tagline { display: none; }
-      .sidebar-logo img { width: 80px; margin-bottom: 0; }
-      .nav-section { display: none; }
-      .content { padding: 16px; }
+    @media (max-width: 500px) {
+      .modules-grid { grid-template-columns: 1fr 1fr; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
+      .topbar { padding: 14px 16px; }
+      .topbar-left h2 { font-size: 14px; }
     }
   </style>
   <script>
@@ -288,22 +267,22 @@
   </script>
 </head>
 <body>
-<div class="container">
 
+<div class="overlay id="overlay" onclick="cerrarMenu()"></div>
+
+<div class="container">
   <!-- SIDEBAR -->
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <img src="logo.png" alt="3R Ingeniería">
       <div class="line"></div>
       <div class="tagline">Sistema de<br>Gestión</div>
     </div>
-
     <div class="nav-section">Principal</div>
     <div class="nav-item active">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span>Dashboard</span>
     </div>
-
     <div class="nav-section">Módulos</div>
     <div class="nav-item" onclick="irCRM()">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -314,7 +293,6 @@
       <span>Cálculo de Precio</span>
     </div>
     <!-- AGREGA MÁS nav-item AQUÍ -->
-
     <div class="sidebar-footer">
       <div class="nav-item" onclick="logout()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -326,15 +304,17 @@
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <div class="topbar-left">
-        <h2 id="bienvenida">Bienvenido</h2>
-        <p id="fecha"></p>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="topbar-left">
+          <h2 id="bienvenida">Bienvenido</h2>
+          <p id="fecha"></p>
+        </div>
       </div>
       <div class="topbar-right">
-        <div class="status-dot">
-          <div class="dot"></div>
-          Sesión activa
-        </div>
+        <div class="status-dot"><div class="dot"></div>Sesión activa</div>
         <span class="version">V 1.0</span>
       </div>
     </div>
@@ -396,6 +376,15 @@
   const hoy = new Date();
   document.getElementById("fecha").innerText = `Hoy es ${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]} ${hoy.getFullYear()}`;
 
+  function toggleMenu() {
+    document.getElementById("sidebar").classList.toggle("open");
+    document.getElementById("overlay").classList.toggle("show");
+  }
+  function cerrarMenu() {
+    document.getElementById("sidebar").classList.remove("open");
+    document.getElementById("overlay").classList.remove("show");
+  }
+
   function irCRM() { alert("Módulo CRM en construcción"); }
   function irCalculo() { window.location.href = "calculadora.html"; }
   function logout() {
@@ -405,9 +394,7 @@
 
   const TIEMPO_LIMITE = 3 * 60;
   let segundosRestantes = TIEMPO_LIMITE;
-
   function resetTimer() { segundosRestantes = TIEMPO_LIMITE; }
-
   function actualizarTimer() {
     const pct = (segundosRestantes / TIEMPO_LIMITE) * 100;
     document.getElementById("timerBar").style.width = pct + "%";
@@ -420,11 +407,9 @@
     }
     segundosRestantes--;
   }
-
   ["mousemove","keydown","click","scroll","touchstart"].forEach(e => {
     document.addEventListener(e, resetTimer);
   });
-
   setInterval(actualizarTimer, 1000);
 </script>
 </body>
