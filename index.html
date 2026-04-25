@@ -228,7 +228,7 @@ async function login() {
   document.getElementById("msg").innerText = "";
   const { data, error } = await supabaseClient
     .from("Usuarios3R")
-    .select("Nombre")
+    .select("Nombre,rol")
     .eq("Correo", correo)
     .eq("Contraseña", pass)
     .maybeSingle();
@@ -242,6 +242,7 @@ async function login() {
     return;
   }
   localStorage.setItem("usuario", data.Nombre);
+  localStorage.setItem("rol", data.rol);
   window.location.href = "menu_principal.html";
 }
 </script>
