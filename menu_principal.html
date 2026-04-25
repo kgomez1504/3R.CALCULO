@@ -22,8 +22,6 @@
       background: #fff;
       box-shadow: 0 0 60px rgba(0,0,0,0.15);
     }
-
-    /* SIDEBAR */
     .sidebar {
       width: 240px;
       min-width: 240px;
@@ -35,10 +33,7 @@
       top: 0;
       height: 100vh;
     }
-    .sidebar-logo {
-      text-align: center;
-      margin-bottom: 28px;
-    }
+    .sidebar-logo { text-align: center; margin-bottom: 28px; }
     .sidebar-logo img {
       width: 160px;
       height: auto;
@@ -48,8 +43,7 @@
       margin-bottom: 16px;
     }
     .sidebar-logo .line {
-      width: 28px;
-      height: 2px;
+      width: 28px; height: 2px;
       background: #e02020;
       border-radius: 2px;
       margin: 0 auto 12px;
@@ -63,22 +57,14 @@
       line-height: 2.5;
     }
     .nav-section {
-      font-size: 9px;
-      font-weight: 700;
-      color: #444;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin: 16px 0 8px;
-      padding: 0 4px;
+      font-size: 9px; font-weight: 700; color: #444;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      margin: 16px 0 8px; padding: 0 4px;
     }
     .nav-item {
-      border-radius: 10px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 2px;
-      cursor: pointer;
+      border-radius: 10px; padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 2px; cursor: pointer;
       transition: background 0.15s;
     }
     .nav-item:hover { background: #2a2a2a; }
@@ -90,26 +76,28 @@
       border-top: 1px solid #2a2a2a;
       padding-top: 16px;
     }
-
-    /* MAIN */
+    .rol-badge {
+      display: inline-block;
+      background: #2a2a2a;
+      color: #e02020;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
     .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #f7f8fa;
-      min-width: 0;
-      min-height: 100vh;
+      flex: 1; display: flex; flex-direction: column;
+      background: #f7f8fa; min-width: 0; min-height: 100vh;
     }
     .topbar {
-      background: #fff;
-      padding: 16px 28px;
-      display: flex;
-      align-items: center;
+      background: #fff; padding: 16px 28px;
+      display: flex; align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid #f0f0f0;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      position: sticky; top: 0; z-index: 10;
     }
     .topbar-left h2 { font-size: 16px; font-weight: 700; color: #111; }
     .topbar-left p { font-size: 11px; color: #999; margin-top: 2px; }
@@ -117,166 +105,150 @@
     .status-dot { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #999; }
     .dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
     .version {
-      background: #f5f5f5;
-      border: 1px solid #eee;
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 10px;
-      color: #aaa;
-      font-weight: 700;
-      letter-spacing: 1px;
+      background: #f5f5f5; border: 1px solid #eee;
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 10px; color: #aaa; font-weight: 700; letter-spacing: 1px;
     }
-
-    /* HAMBURGER */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-    }
-    .hamburger span {
-      width: 22px;
-      height: 2px;
-      background: #111;
-      border-radius: 2px;
-      transition: all 0.2s;
-    }
-
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { width: 22px; height: 2px; background: #111; border-radius: 2px; }
     .content { flex: 1; padding: 28px; }
     .section-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #aaa;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 14px;
+      font-size: 11px; font-weight: 700; color: #aaa;
+      letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
     }
-
-    /* MODULES GRID */
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 28px;
+      gap: 14px; margin-bottom: 28px;
     }
     .module-card {
-      background: #fff;
-      border: 1.5px solid #e8e8e8;
-      border-radius: 14px;
-      padding: 20px 16px;
-      cursor: pointer;
-      transition: all 0.2s;
+      background: #fff; border: 1.5px solid #e8e8e8;
+      border-radius: 14px; padding: 20px 16px;
+      cursor: pointer; transition: all 0.2s;
     }
     .module-card:hover {
       border-color: #e02020;
       transform: translateY(-3px);
       box-shadow: 0 8px 24px rgba(224,32,32,0.1);
     }
-    .module-card.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-    .module-card.disabled:hover {
-      border-color: #e8e8e8;
-      transform: none;
-      box-shadow: none;
-    }
     .card-icon {
-      width: 38px;
-      height: 38px;
-      background: #fff0f0;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
+      width: 38px; height: 38px; background: #fff0f0;
+      border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; margin-bottom: 12px;
     }
     .module-card h3 { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 3px; }
     .module-card p { font-size: 11px; color: #999; }
     .badge {
-      display: inline-block;
-      background: #f0f0f0;
-      color: #aaa;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-top: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      display: inline-block; background: #f0f0f0; color: #aaa;
+      font-size: 9px; font-weight: 700; padding: 2px 8px;
+      border-radius: 20px; margin-top: 8px;
+      text-transform: uppercase; letter-spacing: 0.5px;
     }
     .badge.active { background: #fff0f0; color: #e02020; }
-
-    /* STATS */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 12px;
     }
-    .stat-card {
-      background: #fff;
-      border: 1.5px solid #e8e8e8;
-      border-radius: 12px;
-      padding: 16px;
-    }
+    .stat-card { background: #fff; border: 1.5px solid #e8e8e8; border-radius: 12px; padding: 16px; }
     .stat-card .label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
     .stat-card .value { font-size: 22px; font-weight: 700; color: #111; }
     .stat-card .sub { font-size: 10px; color: #aaa; margin-top: 2px; }
     .stat-card .sub.green { color: #22c55e; }
-
     .timer-bar-wrap { height: 3px; background: #f0f0f0; }
     .timer-bar { height: 3px; width: 100%; background: #e02020; transition: width 1s linear; }
 
-    /* OVERLAY MOBILE */
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 200;
+      justify-content: center; align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #fff; border-radius: 20px;
+      padding: 36px; width: 420px; max-width: 95vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal h3 { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .modal .modal-sub { font-size: 12px; color: #999; margin-bottom: 24px; }
+    .modal .field { margin-bottom: 14px; }
+    .modal .field label {
+      display: block; font-size: 10px; font-weight: 700;
+      color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .modal .field input,
+    .modal .field select {
+      width: 100%; padding: 11px 12px;
+      border: 1.5px solid #e8e8e8; border-radius: 10px;
+      font-size: 13px; color: #111; background: #fafafa;
+      outline: none; transition: all 0.2s;
+    }
+    .modal .field input:focus,
+    .modal .field select:focus {
+      border-color: #e02020;
+      box-shadow: 0 0 0 3px rgba(224,32,32,0.08);
+    }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-primary {
+      flex: 1; padding: 12px; background: #e02020;
+      color: white; border: none; border-radius: 10px;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #c01a1a; }
+    .btn-secondary {
+      flex: 1; padding: 12px; background: transparent;
+      color: #666; border: 1.5px solid #e8e8e8;
+      border-radius: 10px; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: #ccc; }
+    .modal-msg { font-size: 12px; text-align: center; margin-top: 10px; min-height: 16px; }
+    .modal-msg.error { color: #e02020; }
+    .modal-msg.success { color: #22c55e; }
+
     .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 99;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 99;
     }
     .overlay.show { display: block; }
 
-    /* RESPONSIVE */
     @media (max-width: 900px) {
       .sidebar {
-        position: fixed;
-        left: -240px;
-        top: 0;
-        height: 100vh;
-        z-index: 100;
-        transition: left 0.25s ease;
+        position: fixed; left: -240px; top: 0;
+        height: 100vh; z-index: 100; transition: left 0.25s ease;
       }
       .sidebar.open { left: 0; }
       .hamburger { display: flex; }
       .topbar-right .status-dot { display: none; }
       .content { padding: 20px 16px; }
     }
-
     @media (max-width: 500px) {
       .modules-grid { grid-template-columns: 1fr 1fr; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .topbar { padding: 14px 16px; }
-      .topbar-left h2 { font-size: 14px; }
     }
   </style>
   <script>
     const usuario = localStorage.getItem("usuario");
-    if (!usuario) window.location.href = "index.html";
+    const rol = localStorage.getItem("rol");
+    if (!usuario || !rol) window.location.href = "index.html";
   </script>
 </head>
 <body>
 
-<div class="overlay id="overlay" onclick="cerrarMenu()"></div>
+<div class="overlay" id="overlay" onclick="cerrarMenu()"></div>
 
 <div class="container">
-  <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <img src="logo.png" alt="3R Ingeniería">
       <div class="line"></div>
       <div class="tagline">Sistema de<br>Gestión</div>
+    </div>
+    <div style="text-align:center;">
+      <span class="rol-badge" id="rolBadge"></span>
     </div>
     <div class="nav-section">Principal</div>
     <div class="nav-item active">
@@ -284,15 +256,7 @@
       <span>Dashboard</span>
     </div>
     <div class="nav-section">Módulos</div>
-    <div class="nav-item" onclick="irCRM()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>CRM</span>
-    </div>
-    <div class="nav-item" onclick="irCalculo()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-      <span>Cálculo de Precio</span>
-    </div>
-    <!-- AGREGA MÁS nav-item AQUÍ -->
+    <div id="navModulos"></div>
     <div class="sidebar-footer">
       <div class="nav-item" onclick="logout()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -301,11 +265,10 @@
     </div>
   </div>
 
-  <!-- MAIN -->
   <div class="main">
     <div class="topbar">
       <div style="display:flex;align-items:center;gap:14px;">
-        <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+        <div class="hamburger" onclick="toggleMenu()">
           <span></span><span></span><span></span>
         </div>
         <div class="topbar-left">
@@ -321,32 +284,14 @@
 
     <div class="content">
       <div class="section-title">Acceso rápido</div>
-      <div class="modules-grid">
-        <div class="module-card" onclick="irCRM()">
-          <div class="card-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h3>CRM</h3>
-          <p>Gestión de clientes</p>
-          <span class="badge active">Activo</span>
-        </div>
-        <div class="module-card" onclick="irCalculo()">
-          <div class="card-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-          </div>
-          <h3>Cálculo de Precio</h3>
-          <p>Calculadora</p>
-          <span class="badge active">Activo</span>
-        </div>
-        <!-- AGREGA MÁS module-card AQUÍ -->
-      </div>
+      <div class="modules-grid" id="modulesGrid"></div>
 
       <div class="section-title">Resumen del sistema</div>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="label">Módulos activos</div>
-          <div class="value">2</div>
-          <div class="sub green">En línea</div>
+          <div class="value" id="totalModulos">0</div>
+          <div class="sub green">Disponibles</div>
         </div>
         <div class="stat-card">
           <div class="label">Tiempo de sesión</div>
@@ -354,9 +299,9 @@
           <div class="sub">Restante</div>
         </div>
         <div class="stat-card">
-          <div class="label">Versión</div>
-          <div class="value">V 1.0</div>
-          <div class="sub">Sistema activo</div>
+          <div class="label">Rol</div>
+          <div class="value" style="font-size:14px;text-transform:capitalize;" id="rolStat"></div>
+          <div class="sub">Acceso asignado</div>
         </div>
       </div>
     </div>
@@ -367,14 +312,203 @@
   </div>
 </div>
 
+<!-- MODAL CREAR USUARIO -->
+<div class="modal-overlay" id="modalUsuario">
+  <div class="modal">
+    <h3>Crear nuevo usuario</h3>
+    <p class="modal-sub">Los datos se guardarán en Usuarios3R</p>
+    <div class="field">
+      <label>Nombre completo</label>
+      <input id="nu_nombre" type="text" placeholder="Ej: Juan Pérez">
+    </div>
+    <div class="field">
+      <label>Correo</label>
+      <input id="nu_correo" type="text" placeholder="usuario@3ringenieria.com">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input id="nu_pass" type="password" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="field">
+      <label>Rol</label>
+      <select id="nu_rol">
+        <option value="vendedor">Vendedor</option>
+        <option value="ventas_internas">Ventas Internas</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Estado</label>
+      <select id="nu_estado">
+        <option value="activo">Activo</option>
+        <option value="inactivo">Inactivo</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" onclick="crearUsuario()">Crear usuario</button>
+    </div>
+    <p class="modal-msg" id="modalMsg"></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 <script>
+  const supabaseUrl = "https://pkkblvultuuzgnuxxajs.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBra2JsdnVsdHV1emdudXh4YWpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNTMxOTYsImV4cCI6MjA5MjYyOTE5Nn0.WpWrcMfAOKmf_nRCgU3wjVxjseC7J4G1mbXJRNmjAWo";
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
   const nombre = localStorage.getItem("usuario");
+  const rol = localStorage.getItem("rol");
+
   if (nombre) document.getElementById("bienvenida").innerText = "Bienvenido, " + nombre;
+  if (rol) {
+    document.getElementById("rolBadge").innerText = rol;
+    document.getElementById("rolStat").innerText = rol;
+  }
 
   const dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
   const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
   const hoy = new Date();
   document.getElementById("fecha").innerText = `Hoy es ${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]} ${hoy.getFullYear()}`;
+
+  // DEFINICIÓN DE MÓDULOS
+  const modulosConfig = [
+    {
+      key: "crm",
+      nombre: "CRM",
+      desc: "Gestión de clientes",
+      accion: () => alert("Módulo CRM en construcción"),
+      icono: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+    },
+    {
+      key: "calculo_precio",
+      nombre: "Cálculo de Precio",
+      desc: "Calculadora",
+      accion: () => window.location.href = "calculadora.html",
+      icono: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>`
+    }
+    // AGREGA MÁS MÓDULOS AQUÍ siguiendo el mismo patrón
+  ];
+
+  async function cargarModulos() {
+    const { data, error } = await supabaseClient
+      .from("roles_modulos")
+      .select("*")
+      .eq("rol", rol)
+      .maybeSingle();
+
+    if (error || !data) {
+      console.error("Error cargando permisos:", error);
+      return;
+    }
+
+    const grid = document.getElementById("modulesGrid");
+    const navModulos = document.getElementById("navModulos");
+    let totalActivos = 0;
+
+    modulosConfig.forEach(m => {
+      if (!data[m.key]) return;
+      totalActivos++;
+
+      // Card en grid
+      const card = document.createElement("div");
+      card.className = "module-card";
+      card.innerHTML = `
+        <div class="card-icon">${m.icono}</div>
+        <h3>${m.nombre}</h3>
+        <p>${m.desc}</p>
+        <span class="badge active">Activo</span>
+      `;
+      card.onclick = m.accion;
+      grid.appendChild(card);
+
+      // Nav en sidebar
+      const nav = document.createElement("div");
+      nav.className = "nav-item";
+      nav.innerHTML = `${m.icono}<span>${m.nombre}</span>`;
+      nav.onclick = m.accion;
+      navModulos.appendChild(nav);
+    });
+
+    // Opción admin: Crear Usuario
+    if (rol === "admin") {
+      totalActivos++;
+
+      const cardAdmin = document.createElement("div");
+      cardAdmin.className = "module-card";
+      cardAdmin.innerHTML = `
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        </div>
+        <h3>Crear Usuario</h3>
+        <p>Gestión de accesos</p>
+        <span class="badge active">Solo Admin</span>
+      `;
+      cardAdmin.onclick = abrirModal;
+      grid.appendChild(cardAdmin);
+
+      const navAdmin = document.createElement("div");
+      navAdmin.className = "nav-item";
+      navAdmin.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        <span>Crear Usuario</span>
+      `;
+      navAdmin.onclick = abrirModal;
+      navModulos.appendChild(navAdmin);
+    }
+
+    document.getElementById("totalModulos").innerText = totalActivos;
+  }
+
+  cargarModulos();
+
+  function abrirModal() { document.getElementById("modalUsuario").classList.add("show"); }
+  function cerrarModal() {
+    document.getElementById("modalUsuario").classList.remove("show");
+    document.getElementById("modalMsg").innerText = "";
+    document.getElementById("modalMsg").className = "modal-msg";
+  }
+
+  async function crearUsuario() {
+    const nombre = document.getElementById("nu_nombre").value.trim();
+    const correo = document.getElementById("nu_correo").value.trim();
+    const pass = document.getElementById("nu_pass").value.trim();
+    const rolNuevo = document.getElementById("nu_rol").value;
+    const estado = document.getElementById("nu_estado").value;
+    const msgEl = document.getElementById("modalMsg");
+
+    if (!nombre || !correo || !pass) {
+      msgEl.className = "modal-msg error";
+      msgEl.innerText = "Completa todos los campos";
+      return;
+    }
+    if (pass.length < 6) {
+      msgEl.className = "modal-msg error";
+      msgEl.innerText = "La contraseña debe tener al menos 6 caracteres";
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("Usuarios3R")
+      .insert([{ Nombre: nombre, Correo: correo, Contraseña: pass, rol: rolNuevo, estado: estado }]);
+
+    if (error) {
+      msgEl.className = "modal-msg error";
+      msgEl.innerText = "Error: " + error.message;
+      return;
+    }
+
+    msgEl.className = "modal-msg success";
+    msgEl.innerText = "✓ Usuario creado correctamente";
+    setTimeout(() => {
+      cerrarModal();
+      document.getElementById("nu_nombre").value = "";
+      document.getElementById("nu_correo").value = "";
+      document.getElementById("nu_pass").value = "";
+    }, 1500);
+  }
 
   function toggleMenu() {
     document.getElementById("sidebar").classList.toggle("open");
@@ -384,11 +518,9 @@
     document.getElementById("sidebar").classList.remove("open");
     document.getElementById("overlay").classList.remove("show");
   }
-
-  function irCRM() { alert("Módulo CRM en construcción"); }
-  function irCalculo() { window.location.href = "calculadora.html"; }
   function logout() {
     localStorage.removeItem("usuario");
+    localStorage.removeItem("rol");
     window.location.href = "index.html";
   }
 
@@ -403,6 +535,7 @@
     document.getElementById("timerDisplay").innerText = m + ":" + (s < 10 ? "0" : "") + s;
     if (segundosRestantes <= 0) {
       localStorage.removeItem("usuario");
+      localStorage.removeItem("rol");
       window.location.href = "index.html";
     }
     segundosRestantes--;
