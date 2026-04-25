@@ -305,6 +305,7 @@
                   <th>Cliente</th>
                   <th>Artículo</th>
                   <th>Cód. Art.</th>
+                  <th>Marca</th>
                   <th>Cant.</th>
                   <th>Moneda</th>
                   <th>V. Unitario</th>
@@ -318,7 +319,7 @@
                 </tr>
               </thead>
               <tbody id="tablaBody">
-                <tr><td colspan="15">
+                <tr><td colspan="16">
                   <div class="empty-state">
                     <div class="empty-icon">📦</div>
                     <h4>Ingresa un criterio de búsqueda</h4>
@@ -392,6 +393,40 @@
               <h4>Top artículos pedidos</h4>
               <p>Por frecuencia de aparición</p>
               <ul class="top-list" id="topArticulos"></ul>
+            </div>
+          </div>
+
+          <!-- SECCIÓN MARCAS -->
+          <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1.5px solid #e8e8e8;">
+            Análisis por Marca
+          </div>
+          <div class="charts-grid">
+            <div class="chart-card">
+              <h4>Valor de venta por marca</h4>
+              <p>Suma total del valor venta por fabricante</p>
+              <div class="chart-wrap tall"><canvas id="chartMarcaValor"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h4>Pedidos por marca</h4>
+              <p>Cantidad de registros por fabricante</p>
+              <div class="chart-wrap tall"><canvas id="chartMarcaCantidad"></canvas></div>
+            </div>
+          </div>
+          <div class="charts-grid-3">
+            <div class="chart-card">
+              <h4>Participación de marca</h4>
+              <p>% del valor total por marca</p>
+              <div class="chart-wrap"><canvas id="chartMarcaPie"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h4>Ticket promedio por marca</h4>
+              <p>Valor promedio por pedido</p>
+              <div class="chart-wrap"><canvas id="chartMarcaTicket"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h4>Ranking de marcas</h4>
+              <p>Por valor total generado</p>
+              <ul class="top-list" id="topMarcas"></ul>
             </div>
           </div>
         </div>
@@ -580,7 +615,7 @@
     const tbody = document.getElementById("tablaBody");
 
     if (!pagina.length) {
-      tbody.innerHTML = `<tr><td colspan="15"><div class="empty-state">
+      tbody.innerHTML = `<tr><td colspan="16"><div class="empty-state">
         <div class="empty-icon">🔍</div><h4>Sin resultados</h4>
         <p>No se encontraron pedidos con ese criterio</p>
       </div></td></tr>`;
@@ -601,6 +636,7 @@
         <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.Cliente||"—"}</td>
         <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.Articulo||"—"}</td>
         <td class="mono">${c.CodigoArticulo||"—"}</td>
+        <td><span style="background:#f0f0f0;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;color:#555;">${c.MarcaArticulo||"—"}</span></td>
         <td style="text-align:center;">${c.CantidadPedida||1}</td>
         <td>${c.Moneda||"—"}</td>
         <td style="text-align:right;">${mon}${vu.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
@@ -789,6 +825,59 @@
           <div class="bar-mini"><div class="bar-mini-fill" style="width:${Math.round(v/maxArt*100)}%"></div></div>
         </div>
         <span class="val">${v}</span>
+      </li>`).join("");
+
+    // 8. MARCA - VALOR
+    destroyChart("chartMarcaValor");
+    const porMarcaVal = {};
+    datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); porMarcaVal[k]=(porMarcaVal[k]||0)+(Number(c.ValorVenta)||0); } });
+    const topMarcaVal = Object.entries(porMarcaVal).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    chartInstances["chartMarcaValor"] = new Chart(document.getElementById("chartMarcaValor"), {
+      type:"bar",
+      data:{ labels:topMarcaVal.map(([k])=>k.length>20?k.substring(0,20)+"…":k), datasets:[{label:"Valor ($)",data:topMarcaVal.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
+      options:{ indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},y:{ticks:{font:{size:10}}}} }
+    });
+
+    // 9. MARCA - CANTIDAD
+    destroyChart("chartMarcaCantidad");
+    const porMarcaCant = {};
+    datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); porMarcaCant[k]=(porMarcaCant[k]||0)+1; } });
+    const topMarcaCant = Object.entries(porMarcaCant).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    chartInstances["chartMarcaCantidad"] = new Chart(document.getElementById("chartMarcaCantidad"), {
+      type:"bar",
+      data:{ labels:topMarcaCant.map(([k])=>k.length>20?k.substring(0,20)+"…":k), datasets:[{label:"Pedidos",data:topMarcaCant.map(([,v])=>v),backgroundColor:"#1565C0",borderRadius:4}] },
+      options:{ indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}} }
+    });
+
+    // 10. MARCA - PIE participación
+    destroyChart("chartMarcaPie");
+    const topMarcaPie = Object.entries(porMarcaVal).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    chartInstances["chartMarcaPie"] = new Chart(document.getElementById("chartMarcaPie"), {
+      type:"doughnut",
+      data:{ labels:topMarcaPie.map(([k])=>k.length>15?k.substring(0,15)+"…":k), datasets:[{data:topMarcaPie.map(([,v])=>v),backgroundColor:COLORES,borderWidth:2,borderColor:"#fff"}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:10},boxWidth:12}}} }
+    });
+
+    // 11. MARCA - TICKET PROMEDIO
+    destroyChart("chartMarcaTicket");
+    const marcaTicket = {};
+    datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); if(!marcaTicket[k]) marcaTicket[k]={sum:0,cnt:0}; marcaTicket[k].sum+=(Number(c.ValorVenta)||0); marcaTicket[k].cnt+=1; } });
+    const topMarcaTick = Object.entries(marcaTicket).map(([k,v])=>[k,v.cnt>0?v.sum/v.cnt:0]).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    chartInstances["chartMarcaTicket"] = new Chart(document.getElementById("chartMarcaTicket"), {
+      type:"bar",
+      data:{ labels:topMarcaTick.map(([k])=>k.length>18?k.substring(0,18)+"…":k), datasets:[{label:"Ticket ($)",data:topMarcaTick.map(([,v])=>v),backgroundColor:"#6A1B9A",borderRadius:4}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},x:{ticks:{font:{size:10}}}} }
+    });
+
+    // 12. RANKING MARCAS (lista)
+    const maxMarcaVal = topMarcaVal[0]?.[1]||1;
+    document.getElementById("topMarcas").innerHTML = topMarcaVal.map(([k,v],i)=>`
+      <li>
+        <span class="rank">#${i+1}</span>
+        <div class="name">${k.length>22?k.substring(0,22)+"…":k}
+          <div class="bar-mini"><div class="bar-mini-fill" style="width:${Math.round(v/maxMarcaVal*100)}%"></div></div>
+        </div>
+        <span class="val">$${v.toLocaleString("es-PE",{maximumFractionDigits:0})}</span>
       </li>`).join("");
   }
 
