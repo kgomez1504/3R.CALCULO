@@ -1,416 +1,191 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel 3R Ingeniería</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #c8cdd6;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    .container {
-      display: flex;
-      width: 100%;
-      max-width: 1400px;
-      min-height: 100vh;
-      background: #fff;
-      box-shadow: 0 0 60px rgba(0,0,0,0.15);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel 3R Ingeniería</title>
 
-    /* SIDEBAR */
-    .sidebar {
-      width: 240px;
-      min-width: 240px;
-      background: #1a1a1a;
-      display: flex;
-      flex-direction: column;
-      padding: 32px 16px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-    }
-    .sidebar-logo {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-    .sidebar-logo img {
-      width: 160px;
-      height: auto;
-      background: #fff;
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 16px;
-    }
-    .sidebar-logo .line {
-      width: 28px;
-      height: 2px;
-      background: #e02020;
-      border-radius: 2px;
-      margin: 0 auto 12px;
-    }
-    .sidebar-logo .tagline {
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      line-height: 2.5;
-    }
-    .nav-section {
-      font-size: 9px;
-      font-weight: 700;
-      color: #444;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin: 16px 0 8px;
-      padding: 0 4px;
-    }
-    .nav-item {
-      border-radius: 10px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 2px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .nav-item:hover { background: #2a2a2a; }
-    .nav-item.active { background: #e02020; }
-    .nav-item span { font-size: 12px; color: #888; font-weight: 500; }
-    .nav-item.active span { color: #fff; font-weight: 700; }
-    .sidebar-footer {
-      margin-top: auto;
-      border-top: 1px solid #2a2a2a;
-      padding-top: 16px;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Segoe UI',sans-serif;
+  background:#c8cdd6;
+}
 
-    /* MAIN */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #f7f8fa;
-      min-width: 0;
-      min-height: 100vh;
-    }
-    .topbar {
-      background: #fff;
-      padding: 16px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #f0f0f0;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .topbar-left h2 { font-size: 16px; font-weight: 700; color: #111; }
-    .topbar-left p { font-size: 11px; color: #999; margin-top: 2px; }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .status-dot { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #999; }
-    .dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
-    .version {
-      background: #f5f5f5;
-      border: 1px solid #eee;
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 10px;
-      color: #aaa;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
+.container{
+  display:flex;
+  min-height:100vh;
+}
 
-    /* HAMBURGER */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-    }
-    .hamburger span {
-      width: 22px;
-      height: 2px;
-      background: #111;
-      border-radius: 2px;
-      transition: all 0.2s;
-    }
+/* SIDEBAR */
+.sidebar{
+  width:240px;
+  background:#1a1a1a;
+  padding:20px;
+  color:white;
+}
 
-    .content { flex: 1; padding: 28px; }
-    .section-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #aaa;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
+.sidebar img{
+  width:140px;
+  margin-bottom:20px;
+}
 
-    /* MODULES GRID */
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 28px;
-    }
-    .module-card {
-      background: #fff;
-      border: 1.5px solid #e8e8e8;
-      border-radius: 14px;
-      padding: 20px 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .module-card:hover {
-      border-color: #e02020;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(224,32,32,0.1);
-    }
-    .module-card.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-    .module-card.disabled:hover {
-      border-color: #e8e8e8;
-      transform: none;
-      box-shadow: none;
-    }
-    .card-icon {
-      width: 38px;
-      height: 38px;
-      background: #fff0f0;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-    .module-card h3 { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 3px; }
-    .module-card p { font-size: 11px; color: #999; }
-    .badge {
-      display: inline-block;
-      background: #f0f0f0;
-      color: #aaa;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-top: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .badge.active { background: #fff0f0; color: #e02020; }
+.nav-item{
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-bottom:5px;
+}
+.nav-item:hover{background:#2a2a2a;}
 
-    /* STATS */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-    }
-    .stat-card {
-      background: #fff;
-      border: 1.5px solid #e8e8e8;
-      border-radius: 12px;
-      padding: 16px;
-    }
-    .stat-card .label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-    .stat-card .value { font-size: 22px; font-weight: 700; color: #111; }
-    .stat-card .sub { font-size: 10px; color: #aaa; margin-top: 2px; }
-    .stat-card .sub.green { color: #22c55e; }
+.main{
+  flex:1;
+  padding:30px;
+  background:#f7f8fa;
+}
 
-    .timer-bar-wrap { height: 3px; background: #f0f0f0; }
-    .timer-bar { height: 3px; width: 100%; background: #e02020; transition: width 1s linear; }
+.module-card{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  cursor:pointer;
+  margin:10px;
+  display:inline-block;
+}
 
-    /* OVERLAY MOBILE */
-    .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 99;
-    }
-    .overlay.show { display: block; }
+button{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+</style>
 
-    /* RESPONSIVE */
-    @media (max-width: 900px) {
-      .sidebar {
-        position: fixed;
-        left: -240px;
-        top: 0;
-        height: 100vh;
-        z-index: 100;
-        transition: left 0.25s ease;
-      }
-      .sidebar.open { left: 0; }
-      .hamburger { display: flex; }
-      .topbar-right .status-dot { display: none; }
-      .content { padding: 20px 16px; }
-    }
+<!-- 🔒 PROTECCIÓN -->
+<script>
+const usuario = localStorage.getItem("usuario");
+if(!usuario){
+  window.location.href = "index.html";
+}
+</script>
 
-    @media (max-width: 500px) {
-      .modules-grid { grid-template-columns: 1fr 1fr; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .topbar { padding: 14px 16px; }
-      .topbar-left h2 { font-size: 14px; }
-    }
-  </style>
-  <script>
-    const usuario = localStorage.getItem("usuario");
-    if (!usuario) window.location.href = "index.html";
-  </script>
 </head>
+
 <body>
 
-<div class="overlay id="overlay" onclick="cerrarMenu()"></div>
-
 <div class="container">
-  <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <img src="logo.png" alt="3R Ingeniería">
-      <div class="line"></div>
-      <div class="tagline">Sistema de<br>Gestión</div>
-    </div>
-    <div class="nav-section">Principal</div>
-    <div class="nav-item active">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span>Dashboard</span>
-    </div>
-    <div class="nav-section">Módulos</div>
-    <div class="nav-item" onclick="irCRM()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>CRM</span>
-    </div>
-    <div class="nav-item" onclick="irCalculo()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-      <span>Cálculo de Precio</span>
-    </div>
-    <!-- AGREGA MÁS nav-item AQUÍ -->
-    <div class="sidebar-footer">
-      <div class="nav-item" onclick="logout()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        <span style="color:#e02020;">Cerrar sesión</span>
-      </div>
-    </div>
-  </div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div class="hamburger" onclick="toggleMenu()" id="hamburger">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="topbar-left">
-          <h2 id="bienvenida">Bienvenido</h2>
-          <p id="fecha"></p>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <div class="status-dot"><div class="dot"></div>Sesión activa</div>
-        <span class="version">V 1.0</span>
-      </div>
-    </div>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <img src="logo.png">
 
-    <div class="content">
-      <div class="section-title">Acceso rápido</div>
-      <div class="modules-grid">
-        <div class="module-card" onclick="irCRM()">
-          <div class="card-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h3>CRM</h3>
-          <p>Gestión de clientes</p>
-          <span class="badge active">Activo</span>
-        </div>
-        <div class="module-card" onclick="irCalculo()">
-          <div class="card-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-          </div>
-          <h3>Cálculo de Precio</h3>
-          <p>Calculadora</p>
-          <span class="badge active">Activo</span>
-        </div>
-        <!-- AGREGA MÁS module-card AQUÍ -->
-      </div>
+  <div class="nav-item" id="modCRM" onclick="irCRM()">CRM</div>
+  <div class="nav-item" id="modCalculo" onclick="irCalculo()">Cálculo de Precio</div>
 
-      <div class="section-title">Resumen del sistema</div>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="label">Módulos activos</div>
-          <div class="value">2</div>
-          <div class="sub green">En línea</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">Tiempo de sesión</div>
-          <div class="value" id="timerDisplay">3:00</div>
-          <div class="sub">Restante</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">Versión</div>
-          <div class="value">V 1.0</div>
-          <div class="sub">Sistema activo</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="timer-bar-wrap">
-      <div class="timer-bar" id="timerBar"></div>
-    </div>
-  </div>
+  <div class="nav-item" onclick="logout()" style="color:red;">Cerrar sesión</div>
 </div>
 
+<!-- MAIN -->
+<div class="main">
+
+  <h2 id="bienvenida"></h2>
+
+  <!-- BOTÓN SOLO ADMIN -->
+  <button id="crearUsuarioBtn" onclick="crearUsuario()" style="background:green;color:white;margin:20px 0;">
+    Crear Usuario
+  </button>
+
+  <!-- MÓDULOS -->
+  <div>
+    <div class="module-card" id="cardCRM" onclick="irCRM()">CRM</div>
+    <div class="module-card" id="cardCalculo" onclick="irCalculo()">Cálculo</div>
+  </div>
+
+</div>
+
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-  const nombre = localStorage.getItem("usuario");
-  if (nombre) document.getElementById("bienvenida").innerText = "Bienvenido, " + nombre;
+const supabaseUrl = "https://pkkblvultuuzgnuxxajs.supabase.co";
+const supabaseKey = "TU_API_KEY";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  const dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
-  const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-  const hoy = new Date();
-  document.getElementById("fecha").innerText = `Hoy es ${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]} ${hoy.getFullYear()}`;
+// 👤 USUARIO
+const nombre = localStorage.getItem("usuario");
+const rol = localStorage.getItem("rol");
 
-  function toggleMenu() {
-    document.getElementById("sidebar").classList.toggle("open");
-    document.getElementById("overlay").classList.toggle("show");
-  }
-  function cerrarMenu() {
-    document.getElementById("sidebar").classList.remove("open");
-    document.getElementById("overlay").classList.remove("show");
+document.getElementById("bienvenida").innerText = "Bienvenido, " + nombre;
+
+// 🔐 PERMISOS (temporal)
+const permisos = {
+  admin: ["CRM","CALCULO","USUARIOS"],
+  vendedor: ["CRM","CALCULO"],
+  invitado: ["CALCULO"]
+};
+
+function aplicarPermisos(){
+  const permisosRol = permisos[rol] || [];
+
+  if(!permisosRol.includes("CRM")){
+    document.getElementById("modCRM").style.display="none";
+    document.getElementById("cardCRM").style.display="none";
   }
 
-  function irCRM() { alert("Módulo CRM en construcción"); }
-  function irCalculo() { window.location.href = "calculadora.html"; }
-  function logout() {
-    localStorage.removeItem("usuario");
-    window.location.href = "index.html";
+  if(!permisosRol.includes("CALCULO")){
+    document.getElementById("modCalculo").style.display="none";
+    document.getElementById("cardCalculo").style.display="none";
   }
 
-  const TIEMPO_LIMITE = 3 * 60;
-  let segundosRestantes = TIEMPO_LIMITE;
-  function resetTimer() { segundosRestantes = TIEMPO_LIMITE; }
-  function actualizarTimer() {
-    const pct = (segundosRestantes / TIEMPO_LIMITE) * 100;
-    document.getElementById("timerBar").style.width = pct + "%";
-    const m = Math.floor(segundosRestantes / 60);
-    const s = segundosRestantes % 60;
-    document.getElementById("timerDisplay").innerText = m + ":" + (s < 10 ? "0" : "") + s;
-    if (segundosRestantes <= 0) {
-      localStorage.removeItem("usuario");
-      window.location.href = "index.html";
-    }
-    segundosRestantes--;
+  if(rol !== "admin"){
+    document.getElementById("crearUsuarioBtn").style.display="none";
   }
-  ["mousemove","keydown","click","scroll","touchstart"].forEach(e => {
-    document.addEventListener(e, resetTimer);
-  });
-  setInterval(actualizarTimer, 1000);
+}
+
+aplicarPermisos();
+
+// 🔓 LOGOUT
+function logout(){
+  localStorage.clear();
+  window.location.href="index.html";
+}
+
+// 📂 NAVEGACIÓN
+function irCRM(){
+  alert("CRM en construcción");
+}
+
+function irCalculo(){
+  window.location.href="calculadora.html";
+}
+
+// 👤 CREAR USUARIO (solo admin)
+async function crearUsuario(){
+  const nombre = prompt("Nombre:");
+  const correo = prompt("Correo:");
+  const pass = prompt("Contraseña:");
+  const rol = prompt("Rol (admin/vendedor/invitado):");
+
+  if(!nombre || !correo || !pass || !rol) return;
+
+  const { error } = await supabaseClient
+    .from("Usuarios3R")
+    .insert([{
+      Nombre:nombre,
+      Correo:correo,
+      Contraseña:pass,
+      Rol:rol
+    }]);
+
+  if(error){
+    alert("Error: "+error.message);
+  }else{
+    alert("Usuario creado");
+  }
+}
 </script>
+
 </body>
 </html>
