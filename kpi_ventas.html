@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPI Ventas — 3R Ingeniería</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #c8cdd6; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+    .container { display: flex; width: 100%; max-width: 1400px; min-height: 100vh; background: #fff; box-shadow: 0 0 60px rgba(0,0,0,0.15); }
+
+    /* SIDEBAR */
+    .sidebar { width: 240px; min-width: 240px; background: #1a1a1a; display: flex; flex-direction: column; padding: 32px 16px; position: sticky; top: 0; height: 100vh; }
+    .sidebar-logo { text-align: center; margin-bottom: 20px; }
+    .sidebar-logo img { width: 160px; height: auto; background: #fff; border-radius: 14px; padding: 12px; margin-bottom: 16px; }
+    .sidebar-logo .line { width: 28px; height: 2px; background: #e02020; border-radius: 2px; margin: 0 auto 12px; }
+    .sidebar-logo .tagline { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; line-height: 2.5; }
+    .nav-section { font-size: 9px; font-weight: 700; color: #444; letter-spacing: 1.5px; text-transform: uppercase; margin: 12px 0 8px; padding: 0 4px; }
+    .nav-item { border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 2px; cursor: pointer; transition: background 0.15s; }
+    .nav-item:hover { background: #2a2a2a; }
+    .nav-item.active { background: #e02020; }
+    .nav-item span { font-size: 12px; color: #888; font-weight: 500; }
+    .nav-item.active span { color: #fff; font-weight: 700; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid #2a2a2a; padding-top: 16px; }
+
+    /* MAIN */
+    .main { flex: 1; display: flex; flex-direction: column; background: #f7f8fa; min-width: 0; min-height: 100vh; }
+    .topbar { background: #fff; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; z-index: 10; }
+    .topbar-left h2 { font-size: 16px; font-weight: 700; color: #111; }
+    .topbar-left p { font-size: 11px; color: #999; margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .version { background: #f5f5f5; border: 1px solid #eee; border-radius: 20px; padding: 3px 10px; font-size: 10px; color: #aaa; font-weight: 700; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { width: 22px; height: 2px; background: #111; border-radius: 2px; }
+
+    /* FILTRO PERIODO */
+    .periodo-bar { background: #fff; padding: 14px 28px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .periodo-bar label { font-size: 10px; font-weight: 700; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+    .periodo-btns { display: flex; gap: 6px; }
+    .periodo-btn { padding: 6px 14px; border: 1.5px solid #e8e8e8; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; background: #fff; color: #888; transition: all 0.15s; }
+    .periodo-btn:hover { border-color: #e02020; color: #e02020; }
+    .periodo-btn.active { background: #e02020; border-color: #e02020; color: #fff; }
+    .periodo-custom { display: flex; gap: 8px; align-items: center; }
+    .periodo-custom input { padding: 6px 10px; border: 1.5px solid #e8e8e8; border-radius: 8px; font-size: 12px; color: #111; outline: none; }
+    .periodo-custom input:focus { border-color: #e02020; }
+    .btn-aplicar { padding: 6px 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+    .content { flex: 1; padding: 24px 28px; }
+
+    /* LOADING */
+    .loading-screen { position: fixed; inset: 0; background: rgba(247,248,250,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 14px; }
+    .loading-spinner { width: 36px; height: 36px; border: 3px solid #e8e8e8; border-top-color: #e02020; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .loading-text { font-size: 13px; color: #aaa; }
+    .loading-sub { font-size: 11px; color: #ccc; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* SECTION TITLE */
+    .section-title { font-size: 11px; font-weight: 700; color: #aaa; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1.5px solid #e8e8e8; display: flex; align-items: center; gap: 8px; }
+    .section-title .pill { background: #e02020; color: #fff; font-size: 9px; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.5px; }
+
+    /* KPI CARDS */
+    .kpi-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    .kpi-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+    .kpi-card { background: #fff; border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 18px 20px; position: relative; overflow: hidden; }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .kpi-card.red::before { background: #e02020; }
+    .kpi-card.blue::before { background: #1565C0; }
+    .kpi-card.green::before { background: #22c55e; }
+    .kpi-card.orange::before { background: #f59e0b; }
+    .kpi-card.purple::before { background: #6A1B9A; }
+    .kpi-card.teal::before { background: #00838F; }
+    .kpi-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .kpi-value { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 4px; line-height: 1; }
+    .kpi-value.big { font-size: 22px; }
+    .kpi-sub { font-size: 11px; color: #aaa; }
+    .kpi-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-top: 6px; }
+    .kpi-badge.up { background: #e8f5e9; color: #2e7d32; }
+    .kpi-badge.down { background: #fde8e8; color: #c62828; }
+    .kpi-badge.neutral { background: #f5f5f5; color: #666; }
+    .kpi-icon { position: absolute; right: 16px; top: 16px; font-size: 24px; opacity: 0.15; }
+
+    /* CHARTS */
+    .charts-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .charts-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .chart-card { background: #fff; border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 20px; }
+    .chart-card h4 { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .chart-card .chart-sub { font-size: 11px; color: #aaa; margin-bottom: 16px; }
+    .chart-wrap { position: relative; height: 220px; }
+    .chart-wrap.tall { height: 280px; }
+    .chart-wrap.short { height: 160px; }
+
+    /* TABLA KPI */
+    .kpi-table-wrap { background: #fff; border: 1.5px solid #e8e8e8; border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+    .kpi-table-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f0f0f0; }
+    .kpi-table-header h4 { font-size: 13px; font-weight: 700; color: #111; }
+    table.kpi-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table.kpi-table thead th { background: #f7f8fa; padding: 10px 16px; text-align: left; font-size: 10px; font-weight: 700; color: #888; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+    table.kpi-table tbody tr { border-bottom: 1px solid #f5f5f5; }
+    table.kpi-table tbody tr:last-child { border-bottom: none; }
+    table.kpi-table tbody td { padding: 11px 16px; color: #333; vertical-align: middle; }
+    .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 10px; font-weight: 700; }
+    .rank-1 { background: #ffd700; color: #7d5a00; }
+    .rank-2 { background: #e0e0e0; color: #555; }
+    .rank-3 { background: #cd7f32; color: #fff; }
+    .rank-n { background: #f5f5f5; color: #888; }
+    .progress-bar { height: 6px; background: #f0f0f0; border-radius: 3px; margin-top: 4px; }
+    .progress-fill { height: 6px; border-radius: 3px; }
+    .bar-red { background: #e02020; }
+    .bar-blue { background: #1565C0; }
+    .bar-green { background: #22c55e; }
+
+    /* ALERT CARDS */
+    .alert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .alert-card { background: #fff; border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 18px 20px; }
+    .alert-card h4 { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .alert-list { list-style: none; }
+    .alert-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 12px; }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-item .name { flex: 1; color: #333; }
+    .alert-item .val { font-weight: 700; color: #111; font-size: 12px; margin-left: 12px; }
+    .alert-item .tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
+    .tag-red { background: #fde8e8; color: #c62828; }
+    .tag-orange { background: #fff3cd; color: #856404; }
+    .tag-green { background: #e8f5e9; color: #2e7d32; }
+
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+    .overlay.show { display: block; }
+
+    @media (max-width: 900px) {
+      .sidebar { position: fixed; left: -240px; top: 0; height: 100vh; z-index: 100; transition: left 0.25s; }
+      .sidebar.open { left: 0; }
+      .hamburger { display: flex; }
+      .content { padding: 16px; }
+      .kpi-grid-4, .kpi-grid-3 { grid-template-columns: 1fr 1fr; }
+      .charts-grid-2, .charts-grid-3 { grid-template-columns: 1fr; }
+      .alert-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 500px) {
+      .kpi-grid-4, .kpi-grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando datos de ventas...</div>
+  <div class="loading-sub" id="loadingSub">Conectando con APIs...</div>
+</div>
+
+<div class="overlay" id="overlay" onclick="cerrarMenu()"></div>
+
+<div class="container">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="3R Ingeniería">
+      <div class="line"></div>
+      <div class="tagline">Sistema de<br>Gestión</div>
+    </div>
+    <div class="nav-section">Navegación</div>
+    <div class="nav-item" onclick="window.location.href='menu_principal.html'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='calculo_precio.html'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>
+      <span>Cotizaciones</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='notas_pedido.html'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Notas de Pedido</span>
+    </div>
+    <div class="nav-item active">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>KPI Ventas</span>
+    </div>
+    <div class="sidebar-footer">
+      <div class="nav-item" onclick="logout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e02020" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span style="color:#e02020;">Cerrar sesión</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+        <div class="topbar-left">
+          <h2>Dashboard Ejecutivo de Ventas</h2>
+          <p id="topbarFecha"></p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="periodoLabel" style="font-size:11px;color:#aaa;font-weight:600;"></span>
+        <span class="version">V 1.0</span>
+      </div>
+    </div>
+
+    <!-- FILTRO PERIODO -->
+    <div class="periodo-bar">
+      <label>Período:</label>
+      <div class="periodo-btns">
+        <button class="periodo-btn" onclick="setPeriodo(3,this)">3M</button>
+        <button class="periodo-btn" onclick="setPeriodo(6,this)">6M</button>
+        <button class="periodo-btn active" onclick="setPeriodo(12,this)">12M</button>
+        <button class="periodo-btn" onclick="setPeriodo(24,this)">24M</button>
+        <button class="periodo-btn" onclick="setPeriodo(0,this)">Todo</button>
+      </div>
+      <div class="periodo-custom">
+        <input type="date" id="fechaDesde" placeholder="Desde">
+        <input type="date" id="fechaHasta" placeholder="Hasta">
+        <button class="btn-aplicar" onclick="aplicarFechas()">Aplicar</button>
+      </div>
+    </div>
+
+    <div class="content" id="dashContent" style="display:none;">
+
+      <!-- ══ BLOQUE 1: KPIs EJECUTIVOS ══ -->
+      <div class="section-title">KPIs Ejecutivos <span class="pill">RESUMEN</span></div>
+      <div class="kpi-grid-4" style="margin-bottom:14px;">
+        <div class="kpi-card red">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-label">Cotizaciones emitidas</div>
+          <div class="kpi-value" id="kCotizaciones">—</div>
+          <div class="kpi-sub">en el período</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-icon">📦</div>
+          <div class="kpi-label">Pedidos generados</div>
+          <div class="kpi-value" id="kPedidos">—</div>
+          <div class="kpi-sub">órdenes de compra</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">🎯</div>
+          <div class="kpi-label">Tasa de conversión</div>
+          <div class="kpi-value" id="kConversion">—</div>
+          <div class="kpi-sub">cotizaciones → pedidos</div>
+          <span class="kpi-badge neutral" id="kConvBadge"></span>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-icon">⏱️</div>
+          <div class="kpi-label">Ciclo de venta promedio</div>
+          <div class="kpi-value" id="kCiclo">—</div>
+          <div class="kpi-sub">días cot. → pedido</div>
+        </div>
+      </div>
+      <div class="kpi-grid-4">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">Valor cotizado</div>
+          <div class="kpi-value big" id="kValorCot">—</div>
+          <div class="kpi-sub">pipeline total</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">✅</div>
+          <div class="kpi-label">Valor vendido</div>
+          <div class="kpi-value big" id="kValorPed">—</div>
+          <div class="kpi-sub">pedidos cerrados</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-label">Eficiencia de valor</div>
+          <div class="kpi-value" id="kEficiencia">—</div>
+          <div class="kpi-sub">vendido / cotizado</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-icon">⚠️</div>
+          <div class="kpi-label">Valor en pipeline</div>
+          <div class="kpi-value big" id="kPipeline">—</div>
+          <div class="kpi-sub">cotizaciones pendientes</div>
+        </div>
+      </div>
+
+      <!-- ══ BLOQUE 2: TENDENCIA ══ -->
+      <div class="section-title">Tendencia Comercial <span class="pill">TIEMPO</span></div>
+      <div class="charts-grid-2">
+        <div class="chart-card">
+          <h4>Cotizaciones vs Pedidos por mes</h4>
+          <div class="chart-sub">Comparativa de actividad comercial</div>
+          <div class="chart-wrap tall"><canvas id="chartTendencia"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>Valor cotizado vs valor vendido por mes</h4>
+          <div class="chart-sub">Evolución del pipeline en USD</div>
+          <div class="chart-wrap tall"><canvas id="chartValorMes"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ══ BLOQUE 3: CONVERSIÓN ══ -->
+      <div class="section-title">Análisis de Conversión <span class="pill">WIN RATE</span></div>
+      <div class="charts-grid-3">
+        <div class="chart-card">
+          <h4>Estado del pipeline</h4>
+          <div class="chart-sub">Distribución de cotizaciones</div>
+          <div class="chart-wrap"><canvas id="chartEstadosCot"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>Conversión por segmento cliente</h4>
+          <div class="chart-sub">% de éxito por tipo</div>
+          <div class="chart-wrap"><canvas id="chartConvSegmento"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>Ticket promedio</h4>
+          <div class="chart-sub">Cotización vs Pedido en USD</div>
+          <div class="chart-wrap"><canvas id="chartTicket"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ══ BLOQUE 4: RANKING VENDEDORES ══ -->
+      <div class="section-title">Rendimiento por Vendedor <span class="pill">EQUIPO</span></div>
+      <div class="kpi-table-wrap">
+        <div class="kpi-table-header">
+          <h4>Ranking de vendedores</h4>
+          <span style="font-size:11px;color:#aaa;">Ordenado por valor vendido</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="kpi-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Vendedor</th>
+                <th>Cot. emitidas</th>
+                <th>Pedidos</th>
+                <th>Win Rate</th>
+                <th>Valor cotizado</th>
+                <th>Valor vendido</th>
+                <th>Ticket promedio</th>
+                <th>Rendimiento</th>
+              </tr>
+            </thead>
+            <tbody id="tablaVendedores"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ BLOQUE 5: CLIENTES ══ -->
+      <div class="section-title">Análisis de Clientes <span class="pill">CARTERA</span></div>
+      <div class="charts-grid-2">
+        <div class="chart-card">
+          <h4>Top 10 clientes por valor vendido</h4>
+          <div class="chart-sub">Suma de pedidos cerrados en USD</div>
+          <div class="chart-wrap tall"><canvas id="chartTopClientes"></canvas></div>
+        </div>
+        <div class="kpi-table-wrap" style="border:none;margin-bottom:0;">
+          <div style="padding:20px 20px 0;">
+            <h4 style="font-size:12px;font-weight:700;color:#111;margin-bottom:3px;">Clientes con mayor potencial sin cerrar</h4>
+            <p style="font-size:11px;color:#aaa;margin-bottom:14px;">Cotizados pero sin pedido en el período</p>
+          </div>
+          <table class="kpi-table">
+            <thead><tr><th>#</th><th>Cliente</th><th>Valor cotizado</th><th>Cots.</th><th>Acción</th></tr></thead>
+            <tbody id="tablaPotencial"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ BLOQUE 6: MARCAS ══ -->
+      <div class="section-title">Análisis por Marca <span class="pill">PORTAFOLIO</span></div>
+      <div class="charts-grid-3">
+        <div class="chart-card">
+          <h4>Marcas más vendidas (valor)</h4>
+          <div class="chart-sub">Por valor total de pedidos</div>
+          <div class="chart-wrap"><canvas id="chartMarcasPed"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>Marcas más cotizadas</h4>
+          <div class="chart-sub">Por frecuencia en cotizaciones</div>
+          <div class="chart-wrap"><canvas id="chartMarcasCot"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>Conversión por marca</h4>
+          <div class="chart-sub">% de cots. que se convierten en pedido</div>
+          <div class="chart-wrap"><canvas id="chartMarcaConv"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ══ BLOQUE 7: ALERTAS ══ -->
+      <div class="section-title">Alertas y Oportunidades <span class="pill">ACCIÓN</span></div>
+      <div class="alert-grid">
+        <div class="alert-card">
+          <h4>🔴 Cotizaciones sin convertir (top valor)</h4>
+          <ul class="alert-list" id="alertasSinConvertir"></ul>
+        </div>
+        <div class="alert-card">
+          <h4>🟡 Clientes sin actividad reciente</h4>
+          <ul class="alert-list" id="alertasSinActividad"></ul>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /container -->
+
+<script>
+  const API_COT = "https://threer-api.onrender.com/api/cotizaciones";
+  const API_PED = "https://threer-api.onrender.com/api/notas-pedido";
+
+  let todasCot = [], todosPed = [];
+  let cotFiltradas = [], pedFiltrados = [];
+  let mesesFiltro = 12;
+  let chartInstances = {};
+
+  if (!localStorage.getItem("usuario")) window.location.href = "index.html";
+
+  const dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+  const mesesNom = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const hoy = new Date();
+  document.getElementById("topbarFecha").innerText = `${dias[hoy.getDay()]}, ${hoy.getDate()} de ${mesesNom[hoy.getMonth()]} ${hoy.getFullYear()}`;
+
+  const COLORES = ["#e02020","#1565C0","#2E7D32","#E65100","#6A1B9A","#00838F","#558B2F","#F57F17","#AD1457","#37474F","#37474F","#5D4037"];
+
+  // ─── CARGAR DATOS ───
+  async function cargarDatos() {
+    document.getElementById("loadingSub").innerText = "Cargando cotizaciones...";
+    try {
+      const [rC, rP] = await Promise.all([fetch(API_COT), fetch(API_PED)]);
+      document.getElementById("loadingSub").innerText = "Procesando datos...";
+      todasCot = await rC.json();
+      todosPed = await rP.json();
+      setPeriodo(12, document.querySelector(".periodo-btn.active"));
+    } catch(e) {
+      document.getElementById("loadingSub").innerText = "Error al cargar. Verifica tu conexión.";
+    }
+  }
+
+  // ─── FILTRO PERIODO ───
+  function setPeriodo(meses, btn) {
+    document.querySelectorAll(".periodo-btn").forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+    mesesFiltro = meses;
+
+    if (meses === 0) {
+      cotFiltradas = todasCot;
+      pedFiltrados = todosPed;
+      document.getElementById("periodoLabel").innerText = "Todo el historial";
+    } else {
+      const corte = new Date();
+      corte.setMonth(corte.getMonth() - meses);
+      const corteStr = corte.toISOString().substring(0,10);
+      cotFiltradas = todasCot.filter(c => (c.FechaCotizacion||"") >= corteStr);
+      pedFiltrados = todosPed.filter(p => (p.FechaPedido||"") >= corteStr);
+      document.getElementById("periodoLabel").innerText = `Últimos ${meses} meses`;
+    }
+    renderDashboard();
+  }
+
+  function aplicarFechas() {
+    const desde = document.getElementById("fechaDesde").value;
+    const hasta = document.getElementById("fechaHasta").value;
+    if (!desde && !hasta) return;
+    document.querySelectorAll(".periodo-btn").forEach(b => b.classList.remove("active"));
+    cotFiltradas = todasCot.filter(c => {
+      const f = c.FechaCotizacion||"";
+      return (!desde || f >= desde) && (!hasta || f <= hasta);
+    });
+    pedFiltrados = todosPed.filter(p => {
+      const f = p.FechaPedido||"";
+      return (!desde || f >= desde) && (!hasta || f <= hasta);
+    });
+    document.getElementById("periodoLabel").innerText = `${desde||"—"} → ${hasta||"—"}`;
+    renderDashboard();
+  }
+
+  // ─── HELPERS ───
+  const fmt = (v, dec=0) => "$" + Number(v).toLocaleString("es-PE",{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  const pct = v => Math.round(v) + "%";
+  const destroyChart = id => { if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; } };
+
+  function diffDias(f1, f2) {
+    const d1 = new Date(f1), d2 = new Date(f2);
+    return Math.round((d2 - d1) / (1000*60*60*24));
+  }
+
+  // ─── RENDER DASHBOARD ───
+  function renderDashboard() {
+    const cot = cotFiltradas;
+    const ped = pedFiltrados;
+
+    // ── KPIs base ──
+    const totalCot = new Set(cot.map(c=>c.NumeroCotizacion)).size;
+    const totalPed = new Set(ped.map(p=>p.NumeroPedido)).size;
+    const valorCot = cot.reduce((s,c)=>s+(Number(c.ValorVenta)||0),0);
+    const valorPed = ped.reduce((s,p)=>s+(Number(p.ValorVenta)||0),0);
+
+    // Pipeline: cotizaciones pendientes (no atendidas ni perdidas)
+    const pendientes = cot.filter(c=>{
+      const e=(c.Estado||"").toLowerCase();
+      return e !== "atendido" && e !== "perdido";
+    });
+    const valorPipeline = pendientes.reduce((s,c)=>s+(Number(c.ValorVenta)||0),0);
+
+    // Conversión: cotizaciones que tienen pedido vinculado
+    const numsCotConPedido = new Set(ped.map(p=>p.NumeroCotizacion).filter(Boolean));
+    const numsTodasCot = [...new Set(cot.map(c=>c.NumeroCotizacion))];
+    const cotConvertidas = numsTodasCot.filter(n => numsCotConPedido.has(n)).length;
+    const tasaConv = totalCot > 0 ? (cotConvertidas / totalCot * 100) : 0;
+
+    // Ciclo de venta: días promedio entre cot y pedido (donde hay vínculo)
+    let sumaDias = 0, countDias = 0;
+    ped.forEach(p => {
+      if (!p.NumeroCotizacion || !p.FechaPedido) return;
+      const cotVinc = cot.find(c => c.NumeroCotizacion === p.NumeroCotizacion);
+      if (cotVinc && cotVinc.FechaCotizacion) {
+        const d = diffDias(cotVinc.FechaCotizacion, p.FechaPedido);
+        if (d >= 0 && d < 365) { sumaDias += d; countDias++; }
+      }
+    });
+    const cicloPromedio = countDias > 0 ? Math.round(sumaDias / countDias) : 0;
+    const eficiencia = valorCot > 0 ? (valorPed / valorCot * 100) : 0;
+
+    // Actualizar KPIs
+    document.getElementById("kCotizaciones").innerText = totalCot.toLocaleString();
+    document.getElementById("kPedidos").innerText = totalPed.toLocaleString();
+    document.getElementById("kConversion").innerText = pct(tasaConv);
+    document.getElementById("kConvBadge").innerText = tasaConv >= 30 ? "✓ Buena" : tasaConv >= 15 ? "⚡ Regular" : "↓ Mejorar";
+    document.getElementById("kConvBadge").className = "kpi-badge " + (tasaConv >= 30 ? "up" : tasaConv >= 15 ? "neutral" : "down");
+    document.getElementById("kCiclo").innerText = cicloPromedio > 0 ? cicloPromedio + " días" : "—";
+    document.getElementById("kValorCot").innerText = fmt(valorCot);
+    document.getElementById("kValorPed").innerText = fmt(valorPed);
+    document.getElementById("kEficiencia").innerText = pct(eficiencia);
+    document.getElementById("kPipeline").innerText = fmt(valorPipeline);
+
+    // ── Tendencia por mes ──
+    destroyChart("chartTendencia");
+    destroyChart("chartValorMes");
+    const mesesSet = new Set([
+      ...cot.map(c=>(c.FechaCotizacion||"").substring(0,7)),
+      ...ped.map(p=>(p.FechaPedido||"").substring(0,7))
+    ]);
+    const mesesList = [...mesesSet].filter(Boolean).sort().slice(-18);
+    const cotPorMes = {}, pedPorMes = {}, valCotMes = {}, valPedMes = {};
+    cot.forEach(c=>{ const k=(c.FechaCotizacion||"").substring(0,7); if(k){cotPorMes[k]=(cotPorMes[k]||0)+1; valCotMes[k]=(valCotMes[k]||0)+(Number(c.ValorVenta)||0);} });
+    ped.forEach(p=>{ const k=(p.FechaPedido||"").substring(0,7); if(k){pedPorMes[k]=(pedPorMes[k]||0)+1; valPedMes[k]=(valPedMes[k]||0)+(Number(p.ValorVenta)||0);} });
+    const labMeses = mesesList.map(m=>{const[y,mo]=m.split("-");return`${mo}/${y.slice(2)}`;});
+
+    chartInstances["chartTendencia"] = new Chart(document.getElementById("chartTendencia"),{
+      type:"bar",
+      data:{ labels:labMeses, datasets:[
+        {label:"Cotizaciones",data:mesesList.map(m=>cotPorMes[m]||0),backgroundColor:"rgba(224,32,32,0.7)",borderRadius:4},
+        {label:"Pedidos",data:mesesList.map(m=>pedPorMes[m]||0),backgroundColor:"rgba(21,101,192,0.7)",borderRadius:4}
+      ]},
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"top",labels:{font:{size:11}}}},scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+    });
+
+    chartInstances["chartValorMes"] = new Chart(document.getElementById("chartValorMes"),{
+      type:"line",
+      data:{ labels:labMeses, datasets:[
+        {label:"Valor Cotizado",data:mesesList.map(m=>valCotMes[m]||0),borderColor:"#e02020",backgroundColor:"rgba(224,32,32,0.08)",fill:true,tension:0.4,pointRadius:3},
+        {label:"Valor Vendido",data:mesesList.map(m=>valPedMes[m]||0),borderColor:"#1565C0",backgroundColor:"rgba(21,101,192,0.08)",fill:true,tension:0.4,pointRadius:3}
+      ]},
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"top",labels:{font:{size:11}}}},scales:{y:{beginAtZero:true,ticks:{font:{size:10},callback:v=>v>=1000000?"$"+Math.round(v/1000000)+"M":v>=1000?"$"+Math.round(v/1000)+"K":"$"+v}},x:{ticks:{font:{size:10}}}} }
+    });
+
+    // ── Estado cotizaciones ──
+    destroyChart("chartEstadosCot");
+    const estadosCot = {};
+    cot.forEach(c=>{ const e=c.Estado||"Sin estado"; estadosCot[e]=(estadosCot[e]||0)+1; });
+    const estColors = {"Atendido":"#22c55e","Perdido":"#e02020","Pendiente":"#f59e0b","Sin estado":"#aaa"};
+    const estKeys = Object.keys(estadosCot);
+    chartInstances["chartEstadosCot"] = new Chart(document.getElementById("chartEstadosCot"),{
+      type:"doughnut",
+      data:{ labels:estKeys, datasets:[{data:estKeys.map(k=>estadosCot[k]),backgroundColor:estKeys.map((k,i)=>estColors[k]||COLORES[i]),borderWidth:2,borderColor:"#fff"}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:11}}}} }
+    });
+
+    // ── Conversión por segmento ──
+    destroyChart("chartConvSegmento");
+    const segCot = {}, segPed = {};
+    cot.forEach(c=>{ if(c.TipoCliente){ const k=c.TipoCliente.split("-")[1]?.trim()||c.TipoCliente; segCot[k]=(segCot[k]||0)+1; } });
+    ped.forEach(p=>{ if(p.TipoCliente){ const k=p.TipoCliente.split("-")[1]?.trim()||p.TipoCliente; segPed[k]=(segPed[k]||0)+1; } });
+    const segKeys = Object.keys(segCot).sort((a,b)=>segCot[b]-segCot[a]).slice(0,7);
+    const segConv = segKeys.map(k=> segCot[k]>0 ? Math.min(100,Math.round((segPed[k]||0)/segCot[k]*100)) : 0);
+    chartInstances["chartConvSegmento"] = new Chart(document.getElementById("chartConvSegmento"),{
+      type:"bar",
+      data:{ labels:segKeys.map(k=>k.length>16?k.substring(0,16)+"…":k), datasets:[{label:"Win rate %",data:segConv,backgroundColor:segConv.map(v=>v>=30?"#22c55e":v>=15?"#f59e0b":"#e02020"),borderRadius:4}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{font:{size:10},callback:v=>v+"%"}},x:{ticks:{font:{size:10}}}} }
+    });
+
+    // ── Ticket promedio ──
+    destroyChart("chartTicket");
+    const ticketCot = cot.length > 0 ? valorCot / cot.length : 0;
+    const ticketPed = ped.length > 0 ? valorPed / ped.length : 0;
+    chartInstances["chartTicket"] = new Chart(document.getElementById("chartTicket"),{
+      type:"bar",
+      data:{ labels:["Cotización","Pedido"], datasets:[{label:"Ticket USD",data:[ticketCot,ticketPed],backgroundColor:["rgba(224,32,32,0.7)","rgba(21,101,192,0.7)"],borderRadius:8,barThickness:60}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},x:{ticks:{font:{size:11}}}} }
+    });
+
+    // ── Tabla vendedores ──
+    const vCot = {}, vPed = {}, vValCot = {}, vValPed = {};
+    cot.forEach(c=>{ if(c.Vendedor){ const k=c.Vendedor.split(",")[0].trim(); vCot[k]=(vCot[k]||0)+1; vValCot[k]=(vValCot[k]||0)+(Number(c.ValorVenta)||0); } });
+    ped.forEach(p=>{ if(p.Vendedor){ const k=p.Vendedor.split(",")[0].trim(); vPed[k]=(vPed[k]||0)+1; vValPed[k]=(vValPed[k]||0)+(Number(p.ValorVenta)||0); } });
+    const allVend = [...new Set([...Object.keys(vCot),...Object.keys(vPed)])];
+    const vendRank = allVend.map(v=>({
+      nombre: v,
+      cots: vCot[v]||0, peds: vPed[v]||0,
+      valCot: vValCot[v]||0, valPed: vValPed[v]||0,
+      winRate: vCot[v]>0 ? Math.round((vPed[v]||0)/vCot[v]*100) : 0,
+      ticket: vPed[v]>0 ? (vValPed[v]||0)/(vPed[v]) : 0
+    })).sort((a,b)=>b.valPed-a.valPed).slice(0,15);
+    const maxVPed = vendRank[0]?.valPed||1;
+
+    document.getElementById("tablaVendedores").innerHTML = vendRank.map((v,i)=>{
+      const rankClass = i===0?"rank-1":i===1?"rank-2":i===2?"rank-3":"rank-n";
+      const wrColor = v.winRate>=30?"bar-green":v.winRate>=15?"":"bar-red";
+      return `<tr>
+        <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
+        <td style="font-weight:600;">${v.nombre}</td>
+        <td style="text-align:center;">${v.cots}</td>
+        <td style="text-align:center;">${v.peds}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-weight:700;color:${v.winRate>=30?"#22c55e":v.winRate>=15?"#f59e0b":"#e02020"}">${v.winRate}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill ${wrColor}" style="width:${Math.min(v.winRate,100)}%;background:${v.winRate>=30?"#22c55e":v.winRate>=15?"#f59e0b":"#e02020"}"></div></div>
+        </td>
+        <td style="text-align:right;">${fmt(v.valCot)}</td>
+        <td style="text-align:right;font-weight:700;">${fmt(v.valPed)}</td>
+        <td style="text-align:right;">${fmt(v.ticket)}</td>
+        <td>
+          <div class="progress-bar"><div class="progress-fill bar-blue" style="width:${Math.round(v.valPed/maxVPed*100)}%"></div></div>
+        </td>
+      </tr>`;
+    }).join("");
+
+    // ── Top clientes ──
+    destroyChart("chartTopClientes");
+    const cliPed = {};
+    ped.forEach(p=>{ if(p.Cliente){ cliPed[p.Cliente]=(cliPed[p.Cliente]||0)+(Number(p.ValorVenta)||0); } });
+    const topCli = Object.entries(cliPed).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    chartInstances["chartTopClientes"] = new Chart(document.getElementById("chartTopClientes"),{
+      type:"bar",
+      data:{ labels:topCli.map(([k])=>k.length>28?k.substring(0,28)+"…":k), datasets:[{label:"Valor ($)",data:topCli.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
+      options:{ indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},y:{ticks:{font:{size:10}}}} }
+    });
+
+    // ── Potencial sin cerrar ──
+    const cliCot = {}, cliCotCount = {};
+    cot.forEach(c=>{ if(c.Cliente){ cliCot[c.Cliente]=(cliCot[c.Cliente]||0)+(Number(c.ValorVenta)||0); cliCotCount[c.Cliente]=(cliCotCount[c.Cliente]||0)+1; } });
+    const cliConPed = new Set(ped.map(p=>p.Cliente).filter(Boolean));
+    const potencial = Object.entries(cliCot)
+      .filter(([k])=>!cliConPed.has(k))
+      .sort((a,b)=>b[1]-a[1]).slice(0,8);
+    document.getElementById("tablaPotencial").innerHTML = potencial.map(([k,v],i)=>`<tr>
+      <td><span class="rank-badge ${i<3?["rank-1","rank-2","rank-3"][i]:"rank-n"}">${i+1}</span></td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${k}</td>
+      <td style="font-weight:700;">${fmt(v)}</td>
+      <td style="text-align:center;">${cliCotCount[k]||0}</td>
+      <td><span class="kpi-badge down">Seguimiento</span></td>
+    </tr>`).join("");
+
+    // ── Marcas ──
+    destroyChart("chartMarcasPed");
+    destroyChart("chartMarcasCot");
+    destroyChart("chartMarcaConv");
+
+    const marcaPed = {}, marcaCot = {}, marcaPedCnt = {}, marcaCotCnt = {};
+    ped.forEach(p=>{ if(p.MarcaArticulo){ const k=p.MarcaArticulo.trim(); marcaPed[k]=(marcaPed[k]||0)+(Number(p.ValorVenta)||0); marcaPedCnt[k]=(marcaPedCnt[k]||0)+1; } });
+    cot.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); marcaCot[k]=(marcaCot[k]||0)+(Number(c.ValorVenta)||0); marcaCotCnt[k]=(marcaCotCnt[k]||0)+1; } });
+
+    const topMarcaPed = Object.entries(marcaPed).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    chartInstances["chartMarcasPed"] = new Chart(document.getElementById("chartMarcasPed"),{
+      type:"doughnut",
+      data:{ labels:topMarcaPed.map(([k])=>k.length>14?k.substring(0,14)+"…":k), datasets:[{data:topMarcaPed.map(([,v])=>v),backgroundColor:COLORES,borderWidth:2,borderColor:"#fff"}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:10},boxWidth:12}}} }
+    });
+
+    const topMarcaCot = Object.entries(marcaCotCnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    chartInstances["chartMarcasCot"] = new Chart(document.getElementById("chartMarcasCot"),{
+      type:"bar",
+      data:{ labels:topMarcaCot.map(([k])=>k.length>14?k.substring(0,14)+"…":k), datasets:[{label:"Cots.",data:topMarcaCot.map(([,v])=>v),backgroundColor:"rgba(224,32,32,0.7)",borderRadius:4}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+    });
+
+    const marcasConAmbo = Object.keys(marcaCotCnt).filter(k=>marcaPedCnt[k]);
+    const marcaConvData = marcasConAmbo.map(k=>({
+      marca: k,
+      conv: Math.round((marcaPedCnt[k]||0)/(marcaCotCnt[k]||1)*100)
+    })).sort((a,b)=>b.conv-a.conv).slice(0,8);
+    chartInstances["chartMarcaConv"] = new Chart(document.getElementById("chartMarcaConv"),{
+      type:"bar",
+      data:{ labels:marcaConvData.map(d=>d.marca.length>14?d.marca.substring(0,14)+"…":d.marca), datasets:[{label:"Conv %",data:marcaConvData.map(d=>d.conv),backgroundColor:marcaConvData.map(d=>d.conv>=30?"#22c55e":d.conv>=15?"#f59e0b":"#e02020"),borderRadius:4}] },
+      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{font:{size:10},callback:v=>v+"%"}},x:{ticks:{font:{size:10}}}} }
+    });
+
+    // ── ALERTAS ──
+    // Cotizaciones sin convertir (mayor valor, pendientes)
+    const cotPendAlerta = cot
+      .filter(c=>{ const e=(c.Estado||"").toLowerCase(); return e!=="atendido"&&e!=="perdido"; })
+      .sort((a,b)=>(Number(b.ValorVenta)||0)-(Number(a.ValorVenta)||0))
+      .slice(0,6);
+    document.getElementById("alertasSinConvertir").innerHTML = cotPendAlerta.map(c=>{
+      const dias = diffDias(c.FechaCotizacion, new Date().toISOString().substring(0,10));
+      const urgencia = dias > 60 ? "tag-red" : dias > 30 ? "tag-orange" : "tag-green";
+      const label = dias > 60 ? `${dias}d vencida` : dias > 30 ? `${dias}d pendiente` : `${dias}d reciente`;
+      return `<li class="alert-item">
+        <span class="name" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${c.Cliente||""}">${c.Cliente||"—"}</span>
+        <span class="val">${fmt(Number(c.ValorVenta)||0)}</span>
+        <span class="tag ${urgencia}">${label}</span>
+      </li>`;
+    }).join("") || "<li class='alert-item'><span class='name' style='color:#aaa'>Sin alertas</span></li>";
+
+    // Clientes sin actividad (cotizados hace más de 90 días sin pedido reciente)
+    const haceNoventa = new Date(); haceNoventa.setDate(haceNoventa.getDate()-90);
+    const haceNovStr = haceNoventa.toISOString().substring(0,10);
+    const cliUltimaCot = {};
+    cot.forEach(c=>{ if(c.Cliente&&c.FechaCotizacion){ if(!cliUltimaCot[c.Cliente]||c.FechaCotizacion>cliUltimaCot[c.Cliente].fecha){ cliUltimaCot[c.Cliente]={fecha:c.FechaCotizacion,valor:Number(c.ValorVenta)||0}; } } });
+    const cliUltimoPed = new Set(ped.filter(p=>(p.FechaPedido||"")>=haceNovStr).map(p=>p.Cliente).filter(Boolean));
+    const sinActividad = Object.entries(cliUltimaCot)
+      .filter(([k,v])=>v.fecha<haceNovStr&&!cliUltimoPed.has(k))
+      .sort((a,b)=>b[1].valor-a[1].valor).slice(0,6);
+    document.getElementById("alertasSinActividad").innerHTML = sinActividad.map(([k,v])=>{
+      const diasSin = diffDias(v.fecha, new Date().toISOString().substring(0,10));
+      return `<li class="alert-item">
+        <span class="name" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${k}">${k}</span>
+        <span class="val">${fmt(v.valor)}</span>
+        <span class="tag tag-orange">${diasSin}d sin actividad</span>
+      </li>`;
+    }).join("") || "<li class='alert-item'><span class='name' style='color:#aaa'>Sin alertas</span></li>";
+
+    document.getElementById("loadingScreen").style.display = "none";
+    document.getElementById("dashContent").style.display = "block";
+  }
+
+  function toggleMenu() { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("overlay").classList.toggle("show"); }
+  function cerrarMenu() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
+  function logout() { localStorage.clear(); window.location.href = "index.html"; }
+
+  cargarDatos();
+</script>
+</body>
+</html>
