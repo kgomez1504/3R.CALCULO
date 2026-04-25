@@ -543,22 +543,27 @@
   // Verificar sesión
   if (!localStorage.getItem("usuario")) window.location.href = "index.html";
 
-  // Fecha topbar
-  const dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
-  const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-  const hoy = new Date();
-  document.getElementById("topbarFecha").innerText = `Hoy es ${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]} ${hoy.getFullYear()}`;
+// ─── TABS ───
+function switchTab(tab, btn) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("panel-" + tab).classList.add("active");
 
-  // ─── TABS ───
-  function switchTab(tab, btn) {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("panel-" + tab).classList.add("active");
-    if (tab === "dashboard" && todasLasCotizaciones.length > 0 && !chartsCreados) {
-      renderDashboard();
+  if (tab === "dashboard") {
+    if (!cotizacionesFiltradas.length) {
+      document.getElementById("dashContent").innerHTML = `
+        <div class="empty-state" style="padding:80px 20px;">
+          <div class="empty-icon">📊</div>
+          <h4>Sin datos para analizar</h4>
+          <p>Primero realiza una búsqueda en la pestaña <b>Buscar</b> para ver el dashboard</p>
+        </div>`;
+      return;
     }
+    chartsCreados = false; // forzar re-render con datos frescos
+    renderDashboard();
   }
+}
 
   // ─── CARGAR DATOS ───
   async function cargarDatos() {
@@ -636,6 +641,7 @@
     paginaActual = 1;
     actualizarStats();
     renderTabla();
+    chartsCreados = false; // 👈 aquí al final, antes del cierre de la función
   }
 
   function limpiar() {
@@ -779,7 +785,7 @@
   // ─── DASHBOARD ───
   function renderDashboard() {
     chartsCreados = true;
-    const datos = todasLasCotizaciones;
+    const datos = cotizacionesFiltradas;
     const total = datos.length;
     const atendidas = datos.filter(c=>(c.Estado||"").toLowerCase()==="atendido");
     const tasa = total ? Math.round(atendidas.length/total*100) : 0;
