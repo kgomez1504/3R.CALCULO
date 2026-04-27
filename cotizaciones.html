@@ -140,9 +140,6 @@
     .stat-mini .sub.green { color: #22c55e; }
     .stat-mini .sub.red { color: #e02020; }
 
-    /* USD badge */
-    .usd-badge { display: inline-flex; align-items: center; gap: 4px; background: #e8f5e9; color: #2e7d32; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
-
     /* ─── TABLE ─── */
     .table-wrap { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1.5px solid #e8e8e8; overflow: hidden; }
     .table-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #f0f0f0; }
@@ -232,10 +229,6 @@
     .top-list .val { font-weight: 700; color: #111; font-size: 12px; }
     .bar-mini { height: 4px; background: #f0f0f0; border-radius: 2px; margin-top: 4px; }
     .bar-mini-fill { height: 4px; background: #e02020; border-radius: 2px; }
-
-    /* Nota de conversión en dashboard */
-    .conversion-note { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 10px; padding: 10px 14px; margin-bottom: 20px; font-size: 11px; color: #0369a1; display: flex; align-items: center; gap: 8px; }
-    .conversion-note svg { flex-shrink: 0; }
 
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
     .overlay.show { display: block; }
@@ -371,7 +364,7 @@
         <div class="stats-row">
           <div class="stat-mini"><div class="label">Total encontradas</div><div class="value" id="statTotal">—</div><div class="sub">registros</div></div>
           <div class="stat-mini"><div class="label">Atendidas</div><div class="value" id="statAtendidas">—</div><div class="sub green">completadas</div></div>
-          <div class="stat-mini"><div class="label">Valor total <span class="usd-badge">USD</span></div><div class="value" id="statValor">—</div><div class="sub">convertido a dólares</div></div>
+          <div class="stat-mini"><div class="label">Valor total</div><div class="value" id="statValor">—</div><div class="sub">suma filtrada</div></div>
           <div class="stat-mini"><div class="label">Clientes únicos</div><div class="value" id="statClientes">—</div><div class="sub">en resultados</div></div>
         </div>
 
@@ -427,19 +420,12 @@
         </div>
 
         <div id="dashContent">
-
-          <!-- Nota de conversión -->
-          <div class="conversion-note">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span id="conversionNoteText">Todos los valores monetarios están expresados en <b>dólares (USD)</b>. Los importes en soles se convierten usando el tipo de cambio registrado en cada cotización.</span>
-          </div>
-
           <!-- KPIs -->
           <div class="dash-stats">
             <div class="dash-card">
               <div class="dc-label">Total cotizaciones</div>
               <div class="dc-value" id="dTotal">—</div>
-              <div class="dc-sub">en búsqueda</div>
+              <div class="dc-sub">en base de datos</div>
             </div>
             <div class="dash-card">
               <div class="dc-label">Tasa de cierre</div>
@@ -447,12 +433,12 @@
               <div class="dc-sub">atendidas / total</div>
             </div>
             <div class="dash-card">
-              <div class="dc-label">Valor total (USD)</div>
+              <div class="dc-label">Valor total ventas</div>
               <div class="dc-value" id="dValorTotal">—</div>
-              <div class="dc-sub">todos convertidos a $</div>
+              <div class="dc-sub">cotizaciones atendidas</div>
             </div>
             <div class="dash-card">
-              <div class="dc-label">Ticket promedio (USD)</div>
+              <div class="dc-label">Ticket promedio</div>
               <div class="dc-value" id="dTicket">—</div>
               <div class="dc-sub">por cotización</div>
             </div>
@@ -475,8 +461,8 @@
           <!-- Charts fila 2 -->
           <div class="charts-grid">
             <div class="chart-card">
-              <h4>Top 10 clientes por valor (USD)</h4>
-              <p>Suma del valor de venta por cliente — convertido a dólares</p>
+              <h4>Top 10 clientes por valor</h4>
+              <p>Suma del valor de venta por cliente</p>
               <div class="chart-wrap tall"><canvas id="chartClientes"></canvas></div>
             </div>
             <div class="chart-card">
@@ -489,13 +475,13 @@
           <!-- Charts fila 3 -->
           <div class="charts-grid-3">
             <div class="chart-card">
-              <h4>Valor por moneda original (USD)</h4>
-              <p>Contribución de cada moneda, expresado en USD</p>
+              <h4>Distribución por moneda</h4>
+              <p>Dólares vs Euros</p>
               <div class="chart-wrap"><canvas id="chartMoneda"></canvas></div>
             </div>
             <div class="chart-card">
-              <h4>Valor por tipo de cliente (USD)</h4>
-              <p>Suma total por segmento — en dólares</p>
+              <h4>Valor por tipo de cliente</h4>
+              <p>Suma total por segmento</p>
               <div class="chart-wrap"><canvas id="chartTipoCliente"></canvas></div>
             </div>
             <div class="chart-card">
@@ -557,48 +543,27 @@
   // Verificar sesión
   if (!localStorage.getItem("usuario")) window.location.href = "index.html";
 
-  // Fecha en topbar
-  const dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
-  const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-  const hoy = new Date();
-  document.getElementById("topbarFecha").innerText = `Hoy es ${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]} ${hoy.getFullYear()}`;
+// ─── TABS ───
+function switchTab(tab, btn) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("panel-" + tab).classList.add("active");
 
-  // ─────────────────────────────────────────────
-  // CONVERSIÓN A USD
-  // Si la moneda es "Soles", divide entre TipoCambio del pedido.
-  // Dólares, Euros u otras se toman tal cual como USD.
-  // ─────────────────────────────────────────────
-  function toUSD(valor, moneda, tipoCambio) {
-    const v = Number(valor) || 0;
-    const tc = Number(tipoCambio) || 1;
-    const m = (moneda || "").toLowerCase();
-    if (m === "soles" || m === "sol" || m === "pen" || m === "s/") {
-      return tc > 0 ? v / tc : v;
+  if (tab === "dashboard") {
+    if (!cotizacionesFiltradas.length) {
+      document.getElementById("dashContent").innerHTML = `
+        <div class="empty-state" style="padding:80px 20px;">
+          <div class="empty-icon">📊</div>
+          <h4>Sin datos para analizar</h4>
+          <p>Primero realiza una búsqueda en la pestaña <b>Buscar</b> para ver el dashboard</p>
+        </div>`;
+      return;
     }
-    return v;
+    chartsCreados = false; // forzar re-render con datos frescos
+    renderDashboard();
   }
-
-  // ─── TABS ───
-  function switchTab(tab, btn) {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("panel-" + tab).classList.add("active");
-
-    if (tab === "dashboard") {
-      if (!cotizacionesFiltradas.length) {
-        document.getElementById("dashContent").innerHTML = `
-          <div class="empty-state" style="padding:80px 20px;">
-            <div class="empty-icon">📊</div>
-            <h4>Sin datos para analizar</h4>
-            <p>Primero realiza una búsqueda en la pestaña <b>Buscar</b> para ver el dashboard</p>
-          </div>`;
-        return;
-      }
-      chartsCreados = false;
-      renderDashboard();
-    }
-  }
+}
 
   // ─── CARGAR DATOS ───
   async function cargarDatos() {
@@ -609,7 +574,7 @@
         fetch(API_CLI)
       ]);
       todasLasCotizaciones = await resCot.json();
-      await resCli.json(); // cargamos aunque no usemos directamente
+      const dataCli = await resCli.json();
 
       listaClientes = [...new Set(todasLasCotizaciones.map(c => c.Cliente).filter(Boolean))].sort();
       listaVendedores = [...new Set(todasLasCotizaciones.map(c => c.Vendedor).filter(Boolean))].sort();
@@ -676,7 +641,7 @@
     paginaActual = 1;
     actualizarStats();
     renderTabla();
-    chartsCreados = false;
+    chartsCreados = false; // 👈 aquí al final, antes del cierre de la función
   }
 
   function limpiar() {
@@ -697,17 +662,16 @@
   function actualizarStats() {
     const total = cotizacionesFiltradas.length;
     const atendidas = cotizacionesFiltradas.filter(c => (c.Estado||"").toLowerCase() === "atendido").length;
-    // Valor total convertido a USD
-    const valorTotalUSD = cotizacionesFiltradas.reduce((s,c) => s + toUSD(c.ValorVenta, c.Moneda, c.TipoCambio), 0);
+    const valorTotal = cotizacionesFiltradas.reduce((s,c) => s + (Number(c.ValorVenta)||0), 0);
     const clientes = new Set(cotizacionesFiltradas.map(c => c.Cliente)).size;
     document.getElementById("statTotal").innerText = total.toLocaleString();
     document.getElementById("statAtendidas").innerText = atendidas.toLocaleString();
-    document.getElementById("statValor").innerText = "$" + valorTotalUSD.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2});
+    document.getElementById("statValor").innerText = "$" + valorTotal.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2});
     document.getElementById("statClientes").innerText = clientes.toLocaleString();
     document.getElementById("tableCount").innerText = `${total.toLocaleString()} registros`;
   }
 
-  // ─── TABLA — se muestra en moneda original ───
+  // ─── TABLA ───
   function renderTabla() {
     const inicio = (paginaActual - 1) * POR_PAGINA;
     const pagina = cotizacionesFiltradas.slice(inicio, inicio + POR_PAGINA);
@@ -728,7 +692,7 @@
                : estado.toLowerCase() === "pendiente" ? "badge-pendiente"
                : estado.toLowerCase() === "perdido"   ? "badge-perdido"
                : "badge-otro";
-      const mon = c.Moneda === "Soles" ? "S/" : (c.Moneda === "Euros" ? "€" : "$");
+      const mon = c.Moneda === "Dolares" ? "$" : "€";
       const vu  = Number(c.ValorUnitario)||0;
       const vv  = Number(c.ValorVenta)||0;
       const dto = Number(c.PorcentajeDescuento)||0;
@@ -776,7 +740,7 @@
     window.scrollTo({top:0,behavior:"smooth"});
   }
 
-  // ─── MODAL DETALLE — se mantiene en moneda original ───
+  // ─── MODAL DETALLE ───
   function verDetalle(id) {
     const items = todasLasCotizaciones.filter(c => c.CotizacionId === id);
     if (!items.length) return;
@@ -792,10 +756,9 @@
       <div class="detalle-item"><label>Validez Oferta</label><span>${p.TiempoValidezOferta||"—"}</span></div>
       ${p.Comentarios?`<div class="detalle-item" style="grid-column:1/-1"><label>Comentarios</label><span>${p.Comentarios}</span></div>`:""}
     `;
-    const mon = p.Moneda === "Soles" ? "S/" : (p.Moneda === "Euros" ? "€" : "$");
+    const mon = p.Moneda==="Dolares"?"$":"€";
     let totalVenta=0, totalUnit=0;
     document.getElementById("articulosBody").innerHTML = items.map(a => {
-      const monA = a.Moneda === "Soles" ? "S/" : (a.Moneda === "Euros" ? "€" : "$");
       const vu=Number(a.ValorUnitario)||0, vv=Number(a.ValorVenta)||0, dto=Number(a.PorcentajeDescuento)||0;
       totalVenta+=vv; totalUnit+=vu*(a.Cantidad||1);
       const bc=a.Estado?.toLowerCase()==="atendido"?"badge-atendido":a.Estado?.toLowerCase()==="pendiente"?"badge-pendiente":a.Estado?.toLowerCase()==="perdido"?"badge-perdido":"badge-otro";
@@ -804,9 +767,9 @@
         <td>${a.Articulo||"—"}</td>
         <td style="text-align:center;">${a.Cantidad||1}</td>
         <td>${a.Moneda||"—"}</td>
-        <td style="text-align:right;">${monA}${vu.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td style="text-align:right;">${mon}${vu.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
         <td style="text-align:center;">${dto>0?dto+"%":"—"}</td>
-        <td style="text-align:right;font-weight:700;">${monA}${vv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td style="text-align:right;font-weight:700;">${mon}${vv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
         <td><span class="badge-estado ${bc}">${a.Estado||"—"}</span></td>
       </tr>`;
     }).join("");
@@ -819,52 +782,28 @@
 
   function cerrarModal() { document.getElementById("modalDetalle").classList.remove("show"); }
 
-  // ─────────────────────────────────────────────
-  // DASHBOARD — todos los valores monetarios en USD
-  // ─────────────────────────────────────────────
+  // ─── DASHBOARD ───
   function renderDashboard() {
     chartsCreados = true;
     const datos = cotizacionesFiltradas;
     const total = datos.length;
     const atendidas = datos.filter(c=>(c.Estado||"").toLowerCase()==="atendido");
     const tasa = total ? Math.round(atendidas.length/total*100) : 0;
-
-    // Helper: ValorVenta en USD
-    const getValUSD = c => toUSD(c.ValorVenta, c.Moneda, c.TipoCambio);
-
-    const valorTotalUSD = datos.reduce((s,c) => s + getValUSD(c), 0);
-    const ticket = total ? valorTotalUSD / total : 0;
-
-    // Nota de conversión dinámica
-    const haySoles = datos.some(c => {
-      const m = (c.Moneda||"").toLowerCase();
-      return m === "soles" || m === "sol" || m === "pen" || m === "s/";
-    });
-    const noteEl = document.getElementById("conversionNoteText");
-    if (noteEl) {
-      if (!haySoles) {
-        noteEl.innerHTML = 'Todos los registros están en <b>dólares (USD)</b>. No se detectaron importes en soles en esta búsqueda.';
-      } else {
-        const tcs = datos
-          .filter(c => { const m=(c.Moneda||"").toLowerCase(); return m==="soles"||m==="sol"||m==="pen"||m==="s/"; })
-          .map(c => Number(c.TipoCambio)||0)
-          .filter(v => v > 0);
-        const tcMin = tcs.length ? Math.min(...tcs).toFixed(3) : "—";
-        const tcMax = tcs.length ? Math.max(...tcs).toFixed(3) : "—";
-        noteEl.innerHTML = `Todos los valores están expresados en <b>dólares (USD)</b>. Los importes en soles se convirtieron usando el tipo de cambio de cada cotización (rango: S/ ${tcMin} – S/ ${tcMax}).`;
-      }
-    }
+    const valorTotal = atendidas.reduce((s,c)=>s+(Number(c.ValorVenta)||0),0);
+    const ticket = atendidas.length ? valorTotal/atendidas.length : 0;
 
     document.getElementById("dTotal").innerText = total.toLocaleString();
     document.getElementById("dTasa").innerText = tasa + "%";
-    document.getElementById("dValorTotal").innerText = "$" + valorTotalUSD.toLocaleString("es-PE",{maximumFractionDigits:0});
+    document.getElementById("dValorTotal").innerText = "$" + valorTotal.toLocaleString("es-PE",{maximumFractionDigits:0});
     document.getElementById("dTicket").innerText = "$" + ticket.toLocaleString("es-PE",{maximumFractionDigits:0});
 
+    // Colores
     const ROJO = "#e02020";
     const COLORES = ["#e02020","#1565C0","#2E7D32","#E65100","#6A1B9A","#00838F","#558B2F","#F57F17","#AD1457","#37474F"];
+
     const destroyChart = id => { if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; } };
 
-    // 1. COTIZACIONES POR MES (cantidad)
+    // 1. COTIZACIONES POR MES
     destroyChart("chartMeses");
     const porMes = {};
     datos.forEach(c => {
@@ -897,16 +836,16 @@
       options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{font:{size:11}} } } }
     });
 
-    // 3. TOP CLIENTES — valor en USD
+    // 3. TOP CLIENTES POR VALOR
     destroyChart("chartClientes");
     const porCliente = {};
-    datos.forEach(c => { const k=c.Cliente||"Sin nombre"; porCliente[k]=(porCliente[k]||0)+getValUSD(c); });
+    datos.forEach(c => { const k=c.Cliente||"Sin nombre"; porCliente[k]=(porCliente[k]||0)+(Number(c.ValorVenta)||0); });
     const topCli = Object.entries(porCliente).sort((a,b)=>b[1]-a[1]).slice(0,10);
     chartInstances["chartClientes"] = new Chart(document.getElementById("chartClientes"), {
       type: "bar",
       data: {
         labels: topCli.map(([k])=>k.length>25?k.substring(0,25)+"…":k),
-        datasets: [{ label:"Valor (USD)", data: topCli.map(([,v])=>v), backgroundColor: COLORES, borderRadius: 4 }]
+        datasets: [{ label:"Valor ($)", data: topCli.map(([,v])=>v), backgroundColor: COLORES, borderRadius: 4 }]
       },
       options: {
         indexAxis:"y", responsive:true, maintainAspectRatio:false,
@@ -915,7 +854,7 @@
       }
     });
 
-    // 4. TOP VENDEDORES (cantidad de cotizaciones)
+    // 4. TOP VENDEDORES
     destroyChart("chartVendedores");
     const porVend = {};
     datos.forEach(c => { if(c.Vendedor){ const k=c.Vendedor.split(",")[0].trim(); porVend[k]=(porVend[k]||0)+1; } });
@@ -933,38 +872,29 @@
       }
     });
 
-    // 5. VALOR POR MONEDA ORIGINAL — suma en USD de cada grupo
+    // 5. MONEDA
     destroyChart("chartMoneda");
     const porMoneda = {};
-    datos.forEach(c => {
-      const m = c.Moneda || "Otro";
-      porMoneda[m] = (porMoneda[m]||0) + getValUSD(c);
-    });
+    datos.forEach(c => { const m=c.Moneda||"Otro"; porMoneda[m]=(porMoneda[m]||0)+(Number(c.ValorVenta)||0); });
     chartInstances["chartMoneda"] = new Chart(document.getElementById("chartMoneda"), {
       type: "pie",
       data: {
-        labels: Object.keys(porMoneda).map(k => `${k} → USD`),
-        datasets: [{ data: Object.values(porMoneda), backgroundColor:["#e02020","#1565C0","#2E7D32","#E65100"], borderWidth:2, borderColor:"#fff" }]
+        labels: Object.keys(porMoneda),
+        datasets: [{ data: Object.values(porMoneda), backgroundColor:["#e02020","#1565C0","#2E7D32"], borderWidth:2, borderColor:"#fff" }]
       },
-      options: {
-        responsive:true, maintainAspectRatio:false,
-        plugins:{
-          legend:{ position:"bottom", labels:{font:{size:11}} },
-          tooltip:{callbacks:{label:ctx=>`$${Number(ctx.raw).toLocaleString("es-PE",{maximumFractionDigits:0})} USD`}}
-        }
-      }
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{font:{size:11}} } } }
     });
 
-    // 6. TIPO CLIENTE — valor en USD
+    // 6. TIPO CLIENTE
     destroyChart("chartTipoCliente");
     const porTipo = {};
-    datos.forEach(c => { if(c.TipoCliente){ const k=c.TipoCliente.split("-")[1]?.trim()||c.TipoCliente; porTipo[k]=(porTipo[k]||0)+getValUSD(c); } });
+    datos.forEach(c => { if(c.TipoCliente){ const k=c.TipoCliente.split("-")[1]?.trim()||c.TipoCliente; porTipo[k]=(porTipo[k]||0)+(Number(c.ValorVenta)||0); } });
     const topTipo = Object.entries(porTipo).sort((a,b)=>b[1]-a[1]).slice(0,8);
     chartInstances["chartTipoCliente"] = new Chart(document.getElementById("chartTipoCliente"), {
       type: "bar",
       data: {
         labels: topTipo.map(([k])=>k.length>18?k.substring(0,18)+"…":k),
-        datasets: [{ label:"Valor (USD)", data: topTipo.map(([,v])=>v), backgroundColor: COLORES, borderRadius: 4 }]
+        datasets: [{ label:"Valor ($)", data: topTipo.map(([,v])=>v), backgroundColor: COLORES, borderRadius: 4 }]
       },
       options: {
         responsive:true, maintainAspectRatio:false,
@@ -973,7 +903,7 @@
       }
     });
 
-    // 7. TOP ARTÍCULOS (frecuencia)
+    // 7. TOP ARTÍCULOS
     const porArt = {};
     datos.forEach(c => { if(c.Articulo){ const k=c.Articulo.split(" ").slice(0,3).join(" "); porArt[k]=(porArt[k]||0)+1; } });
     const topArt = Object.entries(porArt).sort((a,b)=>b[1]-a[1]).slice(0,8);
