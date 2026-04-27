@@ -91,6 +91,9 @@
     .btn-ver { padding: 5px 12px; background: transparent; border: 1.5px solid #e02020; color: #e02020; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
     .btn-ver:hover { background: #e02020; color: #fff; }
 
+    /* USD badge */
+    .usd-badge { display: inline-flex; align-items: center; gap: 4px; background: #e8f5e9; color: #2e7d32; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+
     /* LOADING / EMPTY */
     .loading-state { text-align: center; padding: 60px 20px; color: #bbb; }
     .loading-spinner { width: 28px; height: 28px; border: 3px solid #e8e8e8; border-top-color: #e02020; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
@@ -154,6 +157,10 @@
     .top-list .val { font-weight: 700; color: #111; font-size: 12px; }
     .bar-mini { height: 4px; background: #f0f0f0; border-radius: 2px; margin-top: 4px; }
     .bar-mini-fill { height: 4px; background: #e02020; border-radius: 2px; }
+
+    /* Nota de conversión en dashboard */
+    .conversion-note { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 10px; padding: 10px 14px; margin-bottom: 20px; font-size: 11px; color: #0369a1; display: flex; align-items: center; gap: 8px; }
+    .conversion-note svg { flex-shrink: 0; }
 
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
     .overlay.show { display: block; }
@@ -287,7 +294,7 @@
         <div class="stats-row">
           <div class="stat-mini"><div class="label">Total encontrados</div><div class="value" id="statTotal">—</div><div class="sub">registros</div></div>
           <div class="stat-mini"><div class="label">Despachados</div><div class="value" id="statDespachados">—</div><div class="sub green">completados</div></div>
-          <div class="stat-mini"><div class="label">Valor total venta</div><div class="value" id="statValor">—</div><div class="sub">suma filtrada</div></div>
+          <div class="stat-mini"><div class="label">Valor total <span class="usd-badge">USD</span></div><div class="value" id="statValor">—</div><div class="sub">convertido a dólares</div></div>
           <div class="stat-mini"><div class="label">Clientes únicos</div><div class="value" id="statClientes">—</div><div class="sub">en resultados</div></div>
         </div>
 
@@ -345,11 +352,18 @@
         </div>
 
         <div id="dashContent" style="display:none;">
+
+          <!-- Nota de conversión -->
+          <div class="conversion-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="conversionNoteText">Todos los valores monetarios están expresados en <b>dólares (USD)</b>. Los importes en soles se convierten usando el tipo de cambio registrado en cada pedido.</span>
+          </div>
+
           <div class="dash-stats">
             <div class="dash-card"><div class="dc-label">Total pedidos</div><div class="dc-value" id="dTotal">—</div><div class="dc-sub">en búsqueda</div></div>
             <div class="dash-card"><div class="dc-label">Despachados</div><div class="dc-value dc-accent" id="dDespachados">—</div><div class="dc-sub">completados</div></div>
-            <div class="dash-card"><div class="dc-label">Valor total venta</div><div class="dc-value" id="dValorTotal">—</div><div class="dc-sub">suma filtrada</div></div>
-            <div class="dash-card"><div class="dc-label">Ticket promedio</div><div class="dc-value" id="dTicket">—</div><div class="dc-sub">por pedido</div></div>
+            <div class="dash-card"><div class="dc-label">Valor total (USD)</div><div class="dc-value" id="dValorTotal">—</div><div class="dc-sub">todos convertidos a $</div></div>
+            <div class="dash-card"><div class="dc-label">Ticket promedio (USD)</div><div class="dc-value" id="dTicket">—</div><div class="dc-sub">por pedido</div></div>
           </div>
 
           <div class="charts-grid">
@@ -367,8 +381,8 @@
 
           <div class="charts-grid">
             <div class="chart-card">
-              <h4>Top 10 clientes por valor</h4>
-              <p>Suma del valor de venta por cliente</p>
+              <h4>Top 10 clientes por valor (USD)</h4>
+              <p>Suma del valor de venta por cliente — convertido a dólares</p>
               <div class="chart-wrap tall"><canvas id="chartClientes"></canvas></div>
             </div>
             <div class="chart-card">
@@ -380,13 +394,13 @@
 
           <div class="charts-grid-3">
             <div class="chart-card">
-              <h4>Distribución por moneda</h4>
-              <p>Dólares vs Euros</p>
+              <h4>Valor por moneda original (USD)</h4>
+              <p>Contribución de cada moneda, expresado en USD</p>
               <div class="chart-wrap"><canvas id="chartMoneda"></canvas></div>
             </div>
             <div class="chart-card">
-              <h4>Valor por tipo de cliente</h4>
-              <p>Suma total por segmento</p>
+              <h4>Valor por tipo de cliente (USD)</h4>
+              <p>Suma total por segmento — en dólares</p>
               <div class="chart-wrap"><canvas id="chartTipoCliente"></canvas></div>
             </div>
             <div class="chart-card">
@@ -402,8 +416,8 @@
           </div>
           <div class="charts-grid">
             <div class="chart-card">
-              <h4>Valor de venta por marca</h4>
-              <p>Suma total del valor venta por fabricante</p>
+              <h4>Valor de venta por marca (USD)</h4>
+              <p>Suma total convertida a dólares por fabricante</p>
               <div class="chart-wrap tall"><canvas id="chartMarcaValor"></canvas></div>
             </div>
             <div class="chart-card">
@@ -414,18 +428,18 @@
           </div>
           <div class="charts-grid-3">
             <div class="chart-card">
-              <h4>Participación de marca</h4>
-              <p>% del valor total por marca</p>
+              <h4>Participación de marca (USD)</h4>
+              <p>% del valor total en dólares por marca</p>
               <div class="chart-wrap"><canvas id="chartMarcaPie"></canvas></div>
             </div>
             <div class="chart-card">
-              <h4>Ticket promedio por marca</h4>
-              <p>Valor promedio por pedido</p>
+              <h4>Ticket promedio por marca (USD)</h4>
+              <p>Valor promedio por pedido en dólares</p>
               <div class="chart-wrap"><canvas id="chartMarcaTicket"></canvas></div>
             </div>
             <div class="chart-card">
-              <h4>Ranking de marcas</h4>
-              <p>Por valor total generado</p>
+              <h4>Ranking de marcas (USD)</h4>
+              <p>Por valor total generado en dólares</p>
               <ul class="top-list" id="topMarcas"></ul>
             </div>
           </div>
@@ -483,6 +497,23 @@
   const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
   const hoy = new Date();
   document.getElementById("topbarFecha").innerText = `Hoy es ${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]} ${hoy.getFullYear()}`;
+
+  // ─────────────────────────────────────────────
+  // CONVERSIÓN A USD
+  // Lógica: si la moneda es "Soles", se divide entre TipoCambio.
+  // Si es "Dolares" o "Euros" (o cualquier otra distinta de Soles) se usa el valor tal cual.
+  // El campo TipoCambio es el tipo de cambio PEN/USD del día del pedido.
+  // ─────────────────────────────────────────────
+  function toUSD(valor, moneda, tipoCambio) {
+    const v = Number(valor) || 0;
+    const tc = Number(tipoCambio) || 1;
+    const m = (moneda || "").toLowerCase();
+    if (m === "soles" || m === "sol" || m === "pen" || m === "s/") {
+      return tc > 0 ? v / tc : v;
+    }
+    // Dólares, Euros u otras: se toman como USD directamente
+    return v;
+  }
 
   // TABS
   function switchTab(tab, btn) {
@@ -591,11 +622,12 @@
   function actualizarStats() {
     const total = pedidosFiltrados.length;
     const despachados = pedidosFiltrados.filter(c => (c.Estado||"").toLowerCase() === "despachado").length;
-    const valorTotal = pedidosFiltrados.reduce((s,c) => s + (Number(c.ValorVenta)||0), 0);
+    // Valor total convertido a USD
+    const valorTotalUSD = pedidosFiltrados.reduce((s,c) => s + toUSD(c.ValorVenta, c.Moneda, c.TipoCambio), 0);
     const clientes = new Set(pedidosFiltrados.map(c => c.Cliente)).size;
     document.getElementById("statTotal").innerText = total.toLocaleString();
     document.getElementById("statDespachados").innerText = despachados.toLocaleString();
-    document.getElementById("statValor").innerText = "$" + valorTotal.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2});
+    document.getElementById("statValor").innerText = "$" + valorTotalUSD.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2});
     document.getElementById("statClientes").innerText = clientes.toLocaleString();
     document.getElementById("tableCount").innerText = `${total.toLocaleString()} registros`;
   }
@@ -624,7 +656,8 @@
     }
 
     tbody.innerHTML = pagina.map(c => {
-      const mon = c.Moneda === "Dolares" ? "$" : "€";
+      // En la tabla mostramos los valores en su moneda original
+      const mon = c.Moneda === "Dolares" ? "$" : (c.Moneda === "Soles" ? "S/" : (c.Moneda === "Euros" ? "€" : "$"));
       const vu  = Number(c.ValorUnitario)||0;
       const vv  = Number(c.ValorVenta)||0;
       const pv  = Number(c.PrecioVenta)||0;
@@ -677,7 +710,7 @@
     window.scrollTo({top:0,behavior:"smooth"});
   }
 
-  // MODAL
+  // MODAL — se mantiene en moneda original del pedido
   function verDetalle(numeroPedido) {
     const items = pedidosFiltrados.filter(c => c.NumeroPedido === numeroPedido);
     if (!items.length) return;
@@ -696,10 +729,11 @@
       <div class="detalle-item"><label>Guía de Remisión</label><span>${p.GuiaRemision||"—"}</span></div>
     `;
 
-    const mon = p.Moneda==="Dolares"?"$":"€";
+    const mon = p.Moneda === "Soles" ? "S/" : (p.Moneda === "Euros" ? "€" : "$");
     let totalVenta=0, totalPrecio=0, totalIGV=0;
 
     document.getElementById("articulosBody").innerHTML = items.map(a => {
+      const monA = a.Moneda === "Soles" ? "S/" : (a.Moneda === "Euros" ? "€" : "$");
       const vu=Number(a.ValorUnitario)||0;
       const vv=Number(a.ValorVenta)||0;
       const pv=Number(a.PrecioVenta)||0;
@@ -711,11 +745,11 @@
         <td>${a.Articulo||"—"}</td>
         <td style="text-align:center;">${a.CantidadPedida||1}</td>
         <td>${a.Moneda||"—"}</td>
-        <td style="text-align:right;">${mon}${vu.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td style="text-align:right;">${monA}${vu.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
         <td style="text-align:center;">${dto>0?dto+"%":"—"}</td>
-        <td style="text-align:right;font-weight:700;">${mon}${vv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-        <td style="text-align:right;color:#888;">${mon}${igv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-        <td style="text-align:right;font-weight:700;color:#e02020;">${mon}${pv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td style="text-align:right;font-weight:700;">${monA}${vv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td style="text-align:right;color:#888;">${monA}${igv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td style="text-align:right;font-weight:700;color:#e02020;">${monA}${pv.toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
         <td><span class="badge-estado ${getBadge(a.Estado)}">${a.Estado||"—"}</span></td>
       </tr>`;
     }).join("");
@@ -730,24 +764,50 @@
 
   function cerrarModal() { document.getElementById("modalDetalle").classList.remove("show"); }
 
-  // DASHBOARD
+  // ─────────────────────────────────────────────
+  // DASHBOARD — todos los valores monetarios en USD
+  // ─────────────────────────────────────────────
   function renderDashboard() {
     const datos = pedidosFiltrados;
     const total = datos.length;
     const despachados = datos.filter(c=>(c.Estado||"").toLowerCase()==="despachado");
-    const valorTotal = datos.reduce((s,c)=>s+(Number(c.ValorVenta)||0),0);
-    const ticket = total ? valorTotal/total : 0;
+
+    // Función helper: obtiene el ValorVenta en USD de un registro
+    const getValUSD = c => toUSD(c.ValorVenta, c.Moneda, c.TipoCambio);
+
+    const valorTotalUSD = datos.reduce((s,c) => s + getValUSD(c), 0);
+    const ticket = total ? valorTotalUSD / total : 0;
+
+    // Detectar si hay soles para informar en la nota
+    const haySOles = datos.some(c => {
+      const m = (c.Moneda||"").toLowerCase();
+      return m === "soles" || m === "sol" || m === "pen" || m === "s/";
+    });
+    if (!haySOles) {
+      document.getElementById("conversionNoteText").innerHTML =
+        'Todos los registros están en <b>dólares (USD)</b>. No se detectaron importes en soles en esta búsqueda.';
+    } else {
+      const tcs = datos
+        .filter(c => { const m=(c.Moneda||"").toLowerCase(); return m==="soles"||m==="sol"||m==="pen"||m==="s/"; })
+        .map(c => Number(c.TipoCambio)||0)
+        .filter(v => v > 0);
+      const tcMin = tcs.length ? Math.min(...tcs).toFixed(3) : "—";
+      const tcMax = tcs.length ? Math.max(...tcs).toFixed(3) : "—";
+      document.getElementById("conversionNoteText").innerHTML =
+        `Todos los valores están expresados en <b>dólares (USD)</b>. Los importes en soles se convirtieron usando el tipo de cambio de cada pedido
+        (rango: S/ ${tcMin} – S/ ${tcMax}).`;
+    }
 
     document.getElementById("dTotal").innerText = total.toLocaleString();
     document.getElementById("dDespachados").innerText = despachados.length.toLocaleString();
-    document.getElementById("dValorTotal").innerText = "$" + valorTotal.toLocaleString("es-PE",{maximumFractionDigits:0});
+    document.getElementById("dValorTotal").innerText = "$" + valorTotalUSD.toLocaleString("es-PE",{maximumFractionDigits:0});
     document.getElementById("dTicket").innerText = "$" + ticket.toLocaleString("es-PE",{maximumFractionDigits:0});
 
     const ROJO = "#e02020";
     const COLORES = ["#e02020","#1565C0","#2E7D32","#E65100","#6A1B9A","#00838F","#558B2F","#F57F17","#AD1457","#37474F"];
     const destroyChart = id => { if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; } };
 
-    // 1. POR MES
+    // 1. POR MES (cantidad de pedidos)
     destroyChart("chartMeses");
     const porMes = {};
     datos.forEach(c => { if(!c.FechaPedido) return; const k=c.FechaPedido.substring(0,7); porMes[k]=(porMes[k]||0)+1; });
@@ -770,18 +830,18 @@
       options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:11}}}} }
     });
 
-    // 3. TOP CLIENTES
+    // 3. TOP CLIENTES — por valor en USD
     destroyChart("chartClientes");
     const porCliente = {};
-    datos.forEach(c=>{ const k=c.Cliente||"Sin nombre"; porCliente[k]=(porCliente[k]||0)+(Number(c.ValorVenta)||0); });
+    datos.forEach(c=>{ const k=c.Cliente||"Sin nombre"; porCliente[k]=(porCliente[k]||0)+getValUSD(c); });
     const topCli = Object.entries(porCliente).sort((a,b)=>b[1]-a[1]).slice(0,10);
     chartInstances["chartClientes"] = new Chart(document.getElementById("chartClientes"), {
       type:"bar",
-      data:{ labels:topCli.map(([k])=>k.length>25?k.substring(0,25)+"…":k), datasets:[{label:"Valor ($)",data:topCli.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
+      data:{ labels:topCli.map(([k])=>k.length>25?k.substring(0,25)+"…":k), datasets:[{label:"Valor (USD)",data:topCli.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
       options:{ indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},y:{ticks:{font:{size:10}}}} }
     });
 
-    // 4. TOP VENDEDORES
+    // 4. TOP VENDEDORES (cantidad de pedidos)
     destroyChart("chartVendedores");
     const porVend = {};
     datos.forEach(c=>{ if(c.Vendedor){ const k=c.Vendedor.split(",")[0].trim(); porVend[k]=(porVend[k]||0)+1; } });
@@ -792,28 +852,40 @@
       options:{ indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}} }
     });
 
-    // 5. MONEDA
+    // 5. VALOR POR MONEDA ORIGINAL — suma en USD de cada grupo de moneda
     destroyChart("chartMoneda");
     const porMoneda = {};
-    datos.forEach(c=>{ const m=c.Moneda||"Otro"; porMoneda[m]=(porMoneda[m]||0)+(Number(c.ValorVenta)||0); });
+    datos.forEach(c=>{
+      const m = c.Moneda || "Otro";
+      porMoneda[m] = (porMoneda[m]||0) + getValUSD(c);
+    });
     chartInstances["chartMoneda"] = new Chart(document.getElementById("chartMoneda"), {
       type:"pie",
-      data:{ labels:Object.keys(porMoneda), datasets:[{data:Object.values(porMoneda),backgroundColor:["#e02020","#1565C0","#2E7D32"],borderWidth:2,borderColor:"#fff"}] },
-      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:11}}}} }
+      data:{
+        labels: Object.keys(porMoneda).map(k => `${k} → USD`),
+        datasets:[{data:Object.values(porMoneda),backgroundColor:["#e02020","#1565C0","#2E7D32","#E65100"],borderWidth:2,borderColor:"#fff"}]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{position:"bottom",labels:{font:{size:11}}},
+          tooltip:{callbacks:{label:ctx=>`$${Number(ctx.raw).toLocaleString("es-PE",{maximumFractionDigits:0})} USD`}}
+        }
+      }
     });
 
-    // 6. TIPO CLIENTE
+    // 6. TIPO CLIENTE — valor en USD
     destroyChart("chartTipoCliente");
     const porTipo = {};
-    datos.forEach(c=>{ if(c.TipoCliente){ const k=c.TipoCliente.split("-")[1]?.trim()||c.TipoCliente; porTipo[k]=(porTipo[k]||0)+(Number(c.ValorVenta)||0); } });
+    datos.forEach(c=>{ if(c.TipoCliente){ const k=c.TipoCliente.split("-")[1]?.trim()||c.TipoCliente; porTipo[k]=(porTipo[k]||0)+getValUSD(c); } });
     const topTipo = Object.entries(porTipo).sort((a,b)=>b[1]-a[1]).slice(0,8);
     chartInstances["chartTipoCliente"] = new Chart(document.getElementById("chartTipoCliente"), {
       type:"bar",
-      data:{ labels:topTipo.map(([k])=>k.length>18?k.substring(0,18)+"…":k), datasets:[{label:"Valor ($)",data:topTipo.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
+      data:{ labels:topTipo.map(([k])=>k.length>18?k.substring(0,18)+"…":k), datasets:[{label:"Valor (USD)",data:topTipo.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
       options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},x:{ticks:{font:{size:10}}}} }
     });
 
-    // 7. TOP ARTÍCULOS
+    // 7. TOP ARTÍCULOS (frecuencia)
     const porArt = {};
     datos.forEach(c=>{ if(c.Articulo){ const k=c.Articulo.split(" ").slice(0,3).join(" "); porArt[k]=(porArt[k]||0)+1; } });
     const topArt = Object.entries(porArt).sort((a,b)=>b[1]-a[1]).slice(0,8);
@@ -827,18 +899,18 @@
         <span class="val">${v}</span>
       </li>`).join("");
 
-    // 8. MARCA - VALOR
+    // 8. MARCA - VALOR en USD
     destroyChart("chartMarcaValor");
     const porMarcaVal = {};
-    datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); porMarcaVal[k]=(porMarcaVal[k]||0)+(Number(c.ValorVenta)||0); } });
+    datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); porMarcaVal[k]=(porMarcaVal[k]||0)+getValUSD(c); } });
     const topMarcaVal = Object.entries(porMarcaVal).sort((a,b)=>b[1]-a[1]).slice(0,10);
     chartInstances["chartMarcaValor"] = new Chart(document.getElementById("chartMarcaValor"), {
       type:"bar",
-      data:{ labels:topMarcaVal.map(([k])=>k.length>20?k.substring(0,20)+"…":k), datasets:[{label:"Valor ($)",data:topMarcaVal.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
+      data:{ labels:topMarcaVal.map(([k])=>k.length>20?k.substring(0,20)+"…":k), datasets:[{label:"Valor (USD)",data:topMarcaVal.map(([,v])=>v),backgroundColor:COLORES,borderRadius:4}] },
       options:{ indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},y:{ticks:{font:{size:10}}}} }
     });
 
-    // 9. MARCA - CANTIDAD
+    // 9. MARCA - CANTIDAD (sin cambio)
     destroyChart("chartMarcaCantidad");
     const porMarcaCant = {};
     datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); porMarcaCant[k]=(porMarcaCant[k]||0)+1; } });
@@ -849,27 +921,33 @@
       options:{ indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}} }
     });
 
-    // 10. MARCA - PIE participación
+    // 10. MARCA - PIE participación en USD
     destroyChart("chartMarcaPie");
     const topMarcaPie = Object.entries(porMarcaVal).sort((a,b)=>b[1]-a[1]).slice(0,6);
     chartInstances["chartMarcaPie"] = new Chart(document.getElementById("chartMarcaPie"), {
       type:"doughnut",
       data:{ labels:topMarcaPie.map(([k])=>k.length>15?k.substring(0,15)+"…":k), datasets:[{data:topMarcaPie.map(([,v])=>v),backgroundColor:COLORES,borderWidth:2,borderColor:"#fff"}] },
-      options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:10},boxWidth:12}}} }
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{position:"bottom",labels:{font:{size:10},boxWidth:12}},
+          tooltip:{callbacks:{label:ctx=>`$${Number(ctx.raw).toLocaleString("es-PE",{maximumFractionDigits:0})} USD`}}
+        }
+      }
     });
 
-    // 11. MARCA - TICKET PROMEDIO
+    // 11. MARCA - TICKET PROMEDIO en USD
     destroyChart("chartMarcaTicket");
     const marcaTicket = {};
-    datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); if(!marcaTicket[k]) marcaTicket[k]={sum:0,cnt:0}; marcaTicket[k].sum+=(Number(c.ValorVenta)||0); marcaTicket[k].cnt+=1; } });
+    datos.forEach(c=>{ if(c.MarcaArticulo){ const k=c.MarcaArticulo.trim(); if(!marcaTicket[k]) marcaTicket[k]={sum:0,cnt:0}; marcaTicket[k].sum+=getValUSD(c); marcaTicket[k].cnt+=1; } });
     const topMarcaTick = Object.entries(marcaTicket).map(([k,v])=>[k,v.cnt>0?v.sum/v.cnt:0]).sort((a,b)=>b[1]-a[1]).slice(0,8);
     chartInstances["chartMarcaTicket"] = new Chart(document.getElementById("chartMarcaTicket"), {
       type:"bar",
-      data:{ labels:topMarcaTick.map(([k])=>k.length>18?k.substring(0,18)+"…":k), datasets:[{label:"Ticket ($)",data:topMarcaTick.map(([,v])=>v),backgroundColor:"#6A1B9A",borderRadius:4}] },
+      data:{ labels:topMarcaTick.map(([k])=>k.length>18?k.substring(0,18)+"…":k), datasets:[{label:"Ticket (USD)",data:topMarcaTick.map(([,v])=>v),backgroundColor:"#6A1B9A",borderRadius:4}] },
       options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{size:10},callback:v=>"$"+Number(v).toLocaleString("es-PE",{maximumFractionDigits:0})}},x:{ticks:{font:{size:10}}}} }
     });
 
-    // 12. RANKING MARCAS (lista)
+    // 12. RANKING MARCAS (lista) — USD
     const maxMarcaVal = topMarcaVal[0]?.[1]||1;
     document.getElementById("topMarcas").innerHTML = topMarcaVal.map(([k,v],i)=>`
       <li>
